@@ -40,7 +40,8 @@ Follow all guidelines below for setting up the development environment, running 
   <summary>Local Development</summary>
 
   - Set up `.env` file according to `.env.example`
-    - Note that most of the variables needed are already set in the `.env.shared` file, that's why you don't need to set them in the `.env` file
+    - Note that most of the variables needed for local development are already set in the `.env.example` file
+    - copy `.env.example` to `.env` and set the missing variables
   - Use docker compose to run necessary services locally: `docker compose up --build`, which contains:
     - `server`: the backend service
     - `db`: the postgres db
