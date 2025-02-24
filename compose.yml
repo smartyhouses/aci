@@ -27,7 +27,7 @@ services:
       start_period: 3s
       timeout: 10s
     env_file:
-      - .env
+      - .env.local
     # useful for development, changes take effect in the container without needing to rebuild the image.
     volumes:
       - ./aipolabs/server:/aipolabs/server
@@ -48,7 +48,7 @@ services:
       context: .
       dockerfile: Dockerfile.runner
     env_file:
-      - .env
+      - .env.local
     # Mount the local code into the container so you can run scripts / Alembic
     volumes:
       - ./aipolabs:/aipolabs/aipolabs

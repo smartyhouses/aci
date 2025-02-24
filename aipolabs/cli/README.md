@@ -97,7 +97,7 @@ docker compose exec runner python -m aipolabs.cli.aipolabs create-app --app-file
 
   - This command will test function execution with GPT-generated inputs.
   - You need to first create a test API key with `create-random-api-key` command.
-  - Make sure you have a server running (locally or on the cloud). And set the `CLI_SERVER_URL` in `.env` file.
+  - Make sure you have a server running (locally or on the cloud). And set the `CLI_SERVER_URL` in `.env.local` file.
 
   ```bash
   python -m aipolabs.cli.aipolabs fuzzy-test-function-execution --function-name "function_name" --linked-account-owner-id "owner_id" --aipolabs-api-key "your_api_key_here" --prompt "prompt for LLM to help generate function call arguments"

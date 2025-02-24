@@ -39,15 +39,15 @@ Follow all guidelines below for setting up the development environment, running 
 <details>
   <summary>Local Development</summary>
 
-  - Set up `.env` file according to `.env.example`
+  - Set up `.env.local` file according to `.env.example`
     - Note that most of the variables needed for local development are already set in the `.env.example` file
-    - copy `.env.example` to `.env` and set the missing variables
+    - copy `.env.example` to `.env.local` and set the missing variables
   - Use docker compose to run necessary services locally: `docker compose up --build`, which contains:
     - `server`: the backend service
     - `db`: the postgres db
     - `runner`: a staging host for running any commands, e.g., `pytest`, `seed db`, etc.
   - (Optional) Connect to the database using a GUI client like `DBeaver`
-    - Parameters for the db connection can be found in the `.env` file
+    - Parameters for the db connection can be found in the `.env.local` file
   - (Optional) To seed the db with some data: `docker compose exec runner ./scripts/seed_db.sh`
   - You can access the `Swagger UI` at `http://localhost:8000/v1/docs`
   - To run `pytest`, make sure the db is empty (in case you have seeded the db before), and then: `docker compose exec runner pytest`
