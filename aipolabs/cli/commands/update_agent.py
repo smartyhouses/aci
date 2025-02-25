@@ -48,6 +48,9 @@ from aipolabs.common.schemas.agent import AgentUpdate
     help="new custom instructions for the agent",
 )
 @click.option(
+    "--verbose", is_flag=True, help="provide this flag to print output as it is processed"
+)
+@click.option(
     "--skip-dry-run",
     is_flag=True,
     help="provide this flag to run the command and apply changes to the database",
@@ -59,6 +62,7 @@ def update_agent(
     excluded_apps: list[str] | None,
     excluded_functions: list[str] | None,
     custom_instructions: str | None,
+    verbose: bool,
     skip_dry_run: bool,
 ) -> UUID:
     """
@@ -71,6 +75,7 @@ def update_agent(
         excluded_apps,
         excluded_functions,
         json.loads(custom_instructions) if custom_instructions else None,
+        verbose,
         skip_dry_run,
     )
 
@@ -82,6 +87,7 @@ def update_agent_helper(
     excluded_apps: list[str] | None,
     excluded_functions: list[str] | None,
     custom_instructions: dict[str, str] | None,
+    verbose: bool,
     skip_dry_run: bool,
 ) -> UUID:
     with utils.create_db_session(config.DB_FULL_URL) as db_session:
@@ -100,13 +106,15 @@ def update_agent_helper(
         updated_agent = crud.projects.update_agent(db_session, agent, update)
 
         if not skip_dry_run:
-            click.echo(create_headline(f"will update agent {updated_agent.name}"))
-            click.echo(updated_agent)
+            if verbose:
+                click.echo(create_headline(f"will update agent {updated_agent.name}"))
+                click.echo(updated_agent)
             click.echo(create_headline("provide --skip-dry-run to commit changes"))
             db_session.rollback()
         else:
-            click.echo(create_headline(f"committing update of agent {updated_agent.name}"))
-            click.echo(updated_agent)
+            if verbose:
+                click.echo(create_headline(f"committing update of agent {updated_agent.name}"))
+                click.echo(updated_agent)
             db_session.commit()
 
         return updated_agent.id  # type: ignore
