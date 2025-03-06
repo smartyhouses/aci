@@ -2,12 +2,12 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
+from aipolabs.common.ai_service import get_ai_service
 from aipolabs.common.db import crud
 from aipolabs.common.db.sql_models import App
 from aipolabs.common.enums import Visibility
 from aipolabs.common.exceptions import AppNotFound
 from aipolabs.common.logging import get_logger
-from aipolabs.common.openai_service import OpenAIService
 from aipolabs.common.schemas.app import (
     AppBasic,
     AppBasicWithFunctions,
@@ -21,7 +21,7 @@ from aipolabs.server import dependencies as deps
 
 logger = get_logger(__name__)
 router = APIRouter()
-openai_service = OpenAIService(config.OPENAI_API_KEY)
+ai_service = get_ai_service()
 
 
 @router.get("", response_model=list[AppDetails])
@@ -67,7 +67,7 @@ async def search_apps(
         },
     )
     intent_embedding = (
-        openai_service.generate_embedding(
+        ai_service.generate_embedding(
             query_params.intent,
             config.OPENAI_EMBEDDING_MODEL,
             config.OPENAI_EMBEDDING_DIMENSION,

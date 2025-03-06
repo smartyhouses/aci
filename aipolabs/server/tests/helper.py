@@ -3,13 +3,13 @@ import logging
 from pathlib import Path
 
 from aipolabs.common import embeddings
-from aipolabs.common.openai_service import OpenAIService
+from aipolabs.common.ai_service import get_ai_service
 from aipolabs.common.schemas.app import AppEmbeddingFields, AppUpsert
 from aipolabs.common.schemas.function import FunctionEmbeddingFields, FunctionUpsert
 from aipolabs.server import config
 
 logger = logging.getLogger(__name__)
-openai_service = OpenAIService(config.OPENAI_API_KEY)
+ai_service = get_ai_service()
 DUMMY_APPS_DIR = Path(__file__).parent / "dummy_apps"
 
 
@@ -45,13 +45,13 @@ def prepare_dummy_apps_and_functions() -> list[
 
         app_embedding = embeddings.generate_app_embedding(
             app_embedding_fields,
-            openai_service,
+            ai_service,
             config.OPENAI_EMBEDDING_MODEL,
             config.OPENAI_EMBEDDING_DIMENSION,
         )
         function_embeddings = embeddings.generate_function_embeddings(
             functions_embedding_fields,
-            openai_service,
+            ai_service,
             config.OPENAI_EMBEDDING_MODEL,
             config.OPENAI_EMBEDDING_DIMENSION,
         )

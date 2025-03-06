@@ -1,20 +1,49 @@
 import json
-from typing import Any, TypeVar, cast
+from abc import ABC, abstractmethod
+from typing import Any, Type, TypeVar, cast
 
 from openai import OpenAI
 from pydantic import BaseModel
 
 from aipolabs.common.logging import get_logger
+from aipolabs.server import config
 
 logger = get_logger(__name__)
 
 T = TypeVar("T", bound=BaseModel)
 
 
+class AIService(ABC):
+    @abstractmethod
+    def generate_embedding(
+        self, text: str, embedding_model: str, embedding_dimension: int
+    ) -> list[float]:
+        """
+        Generate an embedding for the given text using the AI service.
+        """
+        pass
+
+    @abstractmethod
+    def generate_fuzzy_function_call_arguments(
+        self, function_definition: dict, prompt: str | None = None
+    ) -> Any:
+        """
+        Generate fuzzy input arguments for a function using the AI service.
+        """
+        pass
+
+    @abstractmethod
+    def get_structured_response(self, response_format: Type[T], **kwargs: Any) -> T:
+        """
+        Returns a structured response from the AI service.
+        """
+        pass
+
+
 # TODO: if multiple concurrent requests, would this be a bottleneck and potentially banned?
 # TODO: backup plan if OpenAI is down?
 # TODO: should this be a singleton and inject into routes? and use a thread pool to handle concurrent requests?
-class OpenAIService:
+class OpenAIService(AIService):
     def __init__(
         self,
         api_key: str,
@@ -26,7 +55,7 @@ class OpenAIService:
         self, text: str, embedding_model: str, embedding_dimension: int
     ) -> list[float]:
         """
-        Generate an embedding for the given text using OpenAI's model.
+        Generate an embedding for the given text using an OpenAI embedding model.
         """
         logger.debug(f"Generating embedding for text: {text}")
         try:
@@ -44,11 +73,10 @@ class OpenAIService:
     def generate_fuzzy_function_call_arguments(
         self,
         function_definition: dict,
-        chat_model: str = "gpt-4o-mini",
         prompt: str | None = None,
     ) -> Any:
         """
-        Generate fuzzy input arguments for a function using GPT-4.
+        Generate fuzzy input arguments for a function using an OpenAI model.
         """
         logger.info(
             f"Generating fuzzy input for function: {function_definition['function']['name']}"
@@ -71,7 +99,7 @@ class OpenAIService:
                 }
             )
         response = self.openai_client.chat.completions.create(
-            model=chat_model,
+            model="gpt-4o-mini",
             messages=messages,
             tools=[function_definition],
             tool_choice="required",  # force the model to generate a tool call
@@ -93,8 +121,18 @@ class OpenAIService:
             raise ValueError("No tool call was generated")
 
     # TODO: note this is a beta feature from OpenAI
-    def get_structured_response(self, response_format: type[T], **kwargs: Any) -> T:
-        """Returns a structured response from OpenAI API"""
+    def get_structured_response(self, response_format: Type[T], **kwargs: Any) -> T:
+        """
+        Returns a structured response from an OpenAI model.
+        """
+        kwargs["model"] = "gpt-4o-mini"
         kwargs["response_format"] = response_format
         response = self.openai_client.beta.chat.completions.parse(**kwargs)
         return cast(T, response.choices[0].message.parsed)
+
+
+def get_ai_service() -> AIService:
+    if config.AI_SERVICE == "OPENAI":
+        return OpenAIService(config.OPENAI_API_KEY)
+    else:
+        raise ValueError(f"Invalid AI service type: {config.AI_SERVICE}")

@@ -1,19 +1,18 @@
+from aipolabs.common.ai_service import AIService
 from aipolabs.common.db.sql_models import Function
 from aipolabs.common.logging import get_logger
-from aipolabs.common.openai_service import OpenAIService
 from aipolabs.common.schemas.function import FilterResponse
 
 logger = get_logger(__name__)
 
 
 def filter_function_call(
-    openai_service: OpenAIService,
+    ai_service: AIService,
     function: Function,
     function_input: dict,
     custom_instructions: str,
 ) -> FilterResponse:
     args = {
-        "model": "gpt-4o-mini",
         "messages": [
             {
                 "role": "system",
@@ -35,6 +34,4 @@ def filter_function_call(
         "temperature": 0,
     }
 
-    # TODO: abstract out to InferenceService
-    # - make an inference layer to handle embeddings, filtering, rag etc
-    return openai_service.get_structured_response(response_format=FilterResponse, **args)
+    return ai_service.get_structured_response(response_format=FilterResponse, **args)

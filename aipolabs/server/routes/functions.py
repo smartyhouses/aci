@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 
 from aipolabs.common import processor
+from aipolabs.common.ai_service import get_ai_service
 from aipolabs.common.db import crud
 from aipolabs.common.db.sql_models import Function
 from aipolabs.common.enums import Visibility
@@ -17,7 +18,6 @@ from aipolabs.common.exceptions import (
 )
 from aipolabs.common.filter import filter_function_call
 from aipolabs.common.logging import get_logger
-from aipolabs.common.openai_service import OpenAIService
 from aipolabs.common.schemas.function import (
     AnthropicFunctionDefinition,
     FunctionBasic,
@@ -38,7 +38,7 @@ from aipolabs.server.security_credentials_manager import SecurityCredentialsResp
 
 router = APIRouter()
 logger = get_logger(__name__)
-openai_service = OpenAIService(config.OPENAI_API_KEY)
+ai_service = get_ai_service()
 
 
 @router.get("", response_model=list[FunctionDetails])
@@ -76,7 +76,7 @@ async def search_functions(
         extra={"function_search": query_params.model_dump(exclude_none=True)},
     )
     intent_embedding = (
-        openai_service.generate_embedding(
+        ai_service.generate_embedding(
             query_params.intent,
             config.OPENAI_EMBEDDING_MODEL,
             config.OPENAI_EMBEDDING_DIMENSION,
@@ -351,7 +351,7 @@ async def execute(
 
     if function.app.name in agent.custom_instructions.keys():
         filter_result = filter_function_call(
-            openai_service,
+            ai_service,
             function,
             body.function_input,
             agent.custom_instructions[function.app.name],

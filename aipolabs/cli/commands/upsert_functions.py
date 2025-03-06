@@ -8,12 +8,12 @@ from sqlalchemy.orm import Session
 
 from aipolabs.cli import config
 from aipolabs.common import embeddings, utils
+from aipolabs.common.ai_service import get_ai_service
 from aipolabs.common.db import crud
 from aipolabs.common.logging import create_headline
-from aipolabs.common.openai_service import OpenAIService
 from aipolabs.common.schemas.function import FunctionEmbeddingFields, FunctionUpsert
 
-openai_service = OpenAIService(config.OPENAI_API_KEY)
+ai_service = get_ai_service()
 
 
 @click.command()
@@ -103,7 +103,7 @@ def create_functions_helper(
     """
     functions_embeddings = embeddings.generate_function_embeddings(
         [FunctionEmbeddingFields.model_validate(func.model_dump()) for func in functions_upsert],
-        openai_service,
+        ai_service,
         embedding_model=config.OPENAI_EMBEDDING_MODEL,
         embedding_dimension=config.OPENAI_EMBEDDING_DIMENSION,
     )
@@ -167,7 +167,7 @@ def update_functions_helper(
             FunctionEmbeddingFields.model_validate(func.model_dump())
             for func in functions_with_new_embeddings
         ],
-        openai_service,
+        ai_service,
         embedding_model=config.OPENAI_EMBEDDING_MODEL,
         embedding_dimension=config.OPENAI_EMBEDDING_DIMENSION,
     )

@@ -7,8 +7,8 @@ import click
 import httpx
 
 from aipolabs.cli import config
+from aipolabs.common.ai_service import get_ai_service
 from aipolabs.common.logging import create_headline
-from aipolabs.common.openai_service import OpenAIService
 from aipolabs.common.schemas.function import FunctionExecute, InferenceProvider
 
 
@@ -73,8 +73,8 @@ def fuzzy_test_function_execution_helper(
     click.echo(f"{json.dumps(function_definition)}")
 
     # Use OpenAI function calling to generate a random input
-    openai_service = OpenAIService(config.OPENAI_API_KEY)
-    function_args = openai_service.generate_fuzzy_function_call_arguments(
+    ai_service = get_ai_service()
+    function_args = ai_service.generate_fuzzy_function_call_arguments(
         function_definition, prompt=prompt
     )
     click.echo(create_headline("Generated function call arguments"))

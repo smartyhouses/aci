@@ -9,13 +9,13 @@ from sqlalchemy.orm import Session
 
 from aipolabs.cli import config
 from aipolabs.common import embeddings, utils
+from aipolabs.common.ai_service import get_ai_service
 from aipolabs.common.db import crud
 from aipolabs.common.db.sql_models import App
 from aipolabs.common.logging import create_headline
-from aipolabs.common.openai_service import OpenAIService
 from aipolabs.common.schemas.app import AppEmbeddingFields, AppUpsert
 
-openai_service = OpenAIService(config.OPENAI_API_KEY)
+ai_service = get_ai_service()
 
 
 @click.command()
@@ -84,7 +84,7 @@ def create_app_helper(db_session: Session, app_upsert: AppUpsert, skip_dry_run: 
     # Generate app embedding using the fields defined in AppEmbeddingFields
     app_embedding = embeddings.generate_app_embedding(
         AppEmbeddingFields.model_validate(app_upsert.model_dump()),
-        openai_service,
+        ai_service,
         config.OPENAI_EMBEDDING_MODEL,
         config.OPENAI_EMBEDDING_DIMENSION,
     )
@@ -123,7 +123,7 @@ def update_app_helper(
     if _need_embedding_regeneration(existing_app_upsert, app_upsert):
         new_embedding = embeddings.generate_app_embedding(
             AppEmbeddingFields.model_validate(app_upsert.model_dump()),
-            openai_service,
+            ai_service,
             config.OPENAI_EMBEDDING_MODEL,
             config.OPENAI_EMBEDDING_DIMENSION,
         )
