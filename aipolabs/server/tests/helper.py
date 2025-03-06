@@ -6,7 +6,6 @@ from aipolabs.common import embeddings
 from aipolabs.common.ai_service import get_ai_service
 from aipolabs.common.schemas.app import AppEmbeddingFields, AppUpsert
 from aipolabs.common.schemas.function import FunctionEmbeddingFields, FunctionUpsert
-from aipolabs.server import config
 
 logger = logging.getLogger(__name__)
 ai_service = get_ai_service()
@@ -46,14 +45,10 @@ def prepare_dummy_apps_and_functions() -> list[
         app_embedding = embeddings.generate_app_embedding(
             app_embedding_fields,
             ai_service,
-            config.OPENAI_EMBEDDING_MODEL,
-            config.OPENAI_EMBEDDING_DIMENSION,
         )
         function_embeddings = embeddings.generate_function_embeddings(
             functions_embedding_fields,
             ai_service,
-            config.OPENAI_EMBEDDING_MODEL,
-            config.OPENAI_EMBEDDING_DIMENSION,
         )
         results.append((app_upsert, functions_upsert, app_embedding, function_embeddings))
     return results

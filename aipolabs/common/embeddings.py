@@ -9,8 +9,6 @@ logger = get_logger(__name__)
 def generate_app_embedding(
     app: AppEmbeddingFields,
     ai_service: AIService,
-    embedding_model: str,
-    embedding_dimension: int,
 ) -> list[float]:
     """
     Generate embedding for app.
@@ -20,7 +18,7 @@ def generate_app_embedding(
     # generate app embeddings based on app config's name, display_name, provider, description, categories
     text_for_embedding = app.model_dump_json()
     logger.debug(f"Text for app embedding: {text_for_embedding}")
-    return ai_service.generate_embedding(text_for_embedding, embedding_model, embedding_dimension)
+    return ai_service.generate_embedding(text_for_embedding)
 
 
 # TODO: batch generate function embeddings
@@ -28,15 +26,11 @@ def generate_app_embedding(
 def generate_function_embeddings(
     functions: list[FunctionEmbeddingFields],
     ai_service: AIService,
-    embedding_model: str,
-    embedding_dimension: int,
 ) -> list[list[float]]:
     logger.debug(f"Generating embeddings for {len(functions)} functions...")
     function_embeddings: list[list[float]] = []
     for function in functions:
-        function_embeddings.append(
-            generate_function_embedding(function, ai_service, embedding_model, embedding_dimension)
-        )
+        function_embeddings.append(generate_function_embedding(function, ai_service))
 
     return function_embeddings
 
@@ -44,10 +38,8 @@ def generate_function_embeddings(
 def generate_function_embedding(
     function: FunctionEmbeddingFields,
     ai_service: AIService,
-    embedding_model: str,
-    embedding_dimension: int,
 ) -> list[float]:
     logger.debug(f"Generating embedding for function: {function.name}...")
     text_for_embedding = function.model_dump_json()
     logger.debug(f"Text for function embedding: {text_for_embedding}")
-    return ai_service.generate_embedding(text_for_embedding, embedding_model, embedding_dimension)
+    return ai_service.generate_embedding(text_for_embedding)

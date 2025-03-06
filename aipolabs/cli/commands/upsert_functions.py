@@ -104,8 +104,6 @@ def create_functions_helper(
     functions_embeddings = embeddings.generate_function_embeddings(
         [FunctionEmbeddingFields.model_validate(func.model_dump()) for func in functions_upsert],
         ai_service,
-        embedding_model=config.OPENAI_EMBEDDING_MODEL,
-        embedding_dimension=config.OPENAI_EMBEDDING_DIMENSION,
     )
     created_functions = crud.functions.create_functions(
         db_session, functions_upsert, functions_embeddings
@@ -168,8 +166,6 @@ def update_functions_helper(
             for func in functions_with_new_embeddings
         ],
         ai_service,
-        embedding_model=config.OPENAI_EMBEDDING_MODEL,
-        embedding_dimension=config.OPENAI_EMBEDDING_DIMENSION,
     )
 
     # Note: the order matters here because the embeddings need to match the functions

@@ -15,9 +15,7 @@ T = TypeVar("T", bound=BaseModel)
 
 class AIService(ABC):
     @abstractmethod
-    def generate_embedding(
-        self, text: str, embedding_model: str, embedding_dimension: int
-    ) -> list[float]:
+    def generate_embedding(self, text: str) -> list[float]:
         """
         Generate an embedding for the given text using the AI service.
         """
@@ -51,9 +49,7 @@ class OpenAIService(AIService):
         self.openai_client = OpenAI(api_key=api_key)
 
     # TODO: exponential backoff?
-    def generate_embedding(
-        self, text: str, embedding_model: str, embedding_dimension: int
-    ) -> list[float]:
+    def generate_embedding(self, text: str) -> list[float]:
         """
         Generate an embedding for the given text using an OpenAI embedding model.
         """
@@ -61,8 +57,8 @@ class OpenAIService(AIService):
         try:
             response = self.openai_client.embeddings.create(
                 input=[text],
-                model=embedding_model,
-                dimensions=embedding_dimension,
+                model=config.OPENAI_EMBEDDING_MODEL,
+                dimensions=config.OPENAI_EMBEDDING_DIMENSION,
             )
             embedding: list[float] = response.data[0].embedding
             return embedding

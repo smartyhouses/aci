@@ -85,8 +85,6 @@ def create_app_helper(db_session: Session, app_upsert: AppUpsert, skip_dry_run: 
     app_embedding = embeddings.generate_app_embedding(
         AppEmbeddingFields.model_validate(app_upsert.model_dump()),
         ai_service,
-        config.OPENAI_EMBEDDING_MODEL,
-        config.OPENAI_EMBEDDING_DIMENSION,
     )
 
     # Create the app entry in the database
@@ -124,8 +122,6 @@ def update_app_helper(
         new_embedding = embeddings.generate_app_embedding(
             AppEmbeddingFields.model_validate(app_upsert.model_dump()),
             ai_service,
-            config.OPENAI_EMBEDDING_MODEL,
-            config.OPENAI_EMBEDDING_DIMENSION,
         )
 
     # Update the app in the database with the new fields and optional embedding update

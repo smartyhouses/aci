@@ -16,7 +16,6 @@ from aipolabs.common.schemas.app import (
     AppsSearch,
 )
 from aipolabs.common.schemas.function import FunctionBasic
-from aipolabs.server import config
 from aipolabs.server import dependencies as deps
 
 logger = get_logger(__name__)
@@ -67,13 +66,7 @@ async def search_apps(
         },
     )
     intent_embedding = (
-        ai_service.generate_embedding(
-            query_params.intent,
-            config.OPENAI_EMBEDDING_MODEL,
-            config.OPENAI_EMBEDDING_DIMENSION,
-        )
-        if query_params.intent
-        else None
+        ai_service.generate_embedding(query_params.intent) if query_params.intent else None
     )
     logger.debug(
         "generated intent embedding",
