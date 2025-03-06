@@ -50,6 +50,7 @@ from aipolabs.common.enums import (
     Visibility,
 )
 
+# TODO: should this be a constant?
 EMBEDDING_DIMENSION = 1024
 APP_DEFAULT_VERSION = "1.0.0"
 # need app to be shorter because it's used as prefix for function name
