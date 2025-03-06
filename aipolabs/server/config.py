@@ -7,7 +7,7 @@ AI_SERVICE = check_and_get_env_variable("SERVER_AI_SERVICE")
 OPENAI_API_KEY = check_and_get_env_variable("SERVER_OPENAI_API_KEY")
 OPENAI_EMBEDDING_MODEL = check_and_get_env_variable("SERVER_OPENAI_EMBEDDING_MODEL")
 OPENAI_EMBEDDING_DIMENSION = int(check_and_get_env_variable("SERVER_OPENAI_EMBEDDING_DIMENSION"))
-
+OPENAI_MODEL = check_and_get_env_variable("SERVER_OPENAI_MODEL")
 # JWT
 SIGNING_KEY = check_and_get_env_variable("SERVER_SIGNING_KEY")
 JWT_ALGORITHM = check_and_get_env_variable("SERVER_JWT_ALGORITHM")

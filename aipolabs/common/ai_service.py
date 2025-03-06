@@ -95,7 +95,7 @@ class OpenAIService(AIService):
                 }
             )
         response = self.openai_client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=config.OPENAI_MODEL,
             messages=messages,
             tools=[function_definition],
             tool_choice="required",  # force the model to generate a tool call
@@ -121,7 +121,7 @@ class OpenAIService(AIService):
         """
         Returns a structured response from an OpenAI model.
         """
-        kwargs["model"] = "gpt-4o-mini"
+        kwargs["model"] = config.OPENAI_MODEL
         kwargs["response_format"] = response_format
         response = self.openai_client.beta.chat.completions.parse(**kwargs)
         return cast(T, response.choices[0].message.parsed)
