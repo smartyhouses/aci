@@ -1,6 +1,6 @@
 import json
 from abc import ABC, abstractmethod
-from typing import Any, TypeVar, cast
+from typing import Any, TypeVar, cast, override
 
 from openai import OpenAI
 from pydantic import BaseModel
@@ -49,6 +49,7 @@ class OpenAIService(AIService):
         self.openai_client = OpenAI(api_key=api_key)
 
     # TODO: exponential backoff?
+    @override
     def generate_embedding(self, text: str) -> list[float]:
         """
         Generate an embedding for the given text using an OpenAI embedding model.
@@ -66,6 +67,7 @@ class OpenAIService(AIService):
             logger.error("Error generating embedding", exc_info=True)
             raise
 
+    @override
     def generate_fuzzy_function_call_arguments(
         self,
         function_definition: dict,
@@ -117,6 +119,7 @@ class OpenAIService(AIService):
             raise ValueError("No tool call was generated")
 
     # TODO: note this is a beta feature from OpenAI
+    @override
     def get_structured_response(self, response_format: type[T], **kwargs: Any) -> T:
         """
         Returns a structured response from an OpenAI model.
