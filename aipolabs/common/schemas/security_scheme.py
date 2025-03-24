@@ -14,6 +14,10 @@ class APIKeyScheme(BaseModel):
         ...,
         description="The name of the API key in the request, e.g., 'X-Subscription-Token'",
     )
+    prefix: str | None = Field(
+        default=None,
+        description="The prefix of the API key in the request, e.g., 'Bearer'. If None, no prefix will be used.",
+    )
 
 
 class OAuth2Scheme(BaseModel):
