@@ -1973,7 +1973,7 @@
                 },
                 "path": {
                     "type": "object",
-                    "description": "Path parameters for the request",
+                    "description": "Path parameters for the requests",
                     "properties": {
                         "id": {
                             "type": "string",
