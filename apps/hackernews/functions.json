@@ -1,0 +1,149 @@
+{
+    "functions": [
+        {
+            "name": "HACKERNEWS__GET_TOP_STORIES",
+            "description": "Retrieve the top stories from Hacker News",
+            "tags": ["hackernews", "stories", "top"],
+            "visibility": ["public"],
+            "active": true,
+            "protocol": "rest",
+            "protocol_data": {
+                "method": "GET",
+                "path": "/topstories.json",
+                "server_url": "https://hacker-news.firebaseio.com/v0"
+            },
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "object",
+                        "properties": {
+                            "limit": {
+                                "type": "integer",
+                                "description": "Number of top stories to retrieve",
+                                "default": 10
+                            }
+                        }
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        {
+            "name": "HACKERNEWS__GET_NEW_STORIES",
+            "description": "Retrieve the newest stories from Hacker News",
+            "tags": ["hackernews", "stories", "new"],
+            "visibility": ["public"],
+            "active": true,
+            "protocol": "rest",
+            "protocol_data": {
+                "method": "GET",
+                "path": "/newstories.json",
+                "server_url": "https://hacker-news.firebaseio.com/v0"
+            },
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "object",
+                        "properties": {
+                            "limit": {
+                                "type": "integer",
+                                "description": "Number of new stories to retrieve",
+                                "default": 10
+                            }
+                        }
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        {
+            "name": "HACKERNEWS__GET_ASK_STORIES",
+            "description": "Retrieve Ask HN stories",
+            "tags": ["hackernews", "stories", "ask"],
+            "visibility": ["public"],
+            "active": true,
+            "protocol": "rest",
+            "protocol_data": {
+                "method": "GET",
+                "path": "/askstories.json",
+                "server_url": "https://hacker-news.firebaseio.com/v0"
+            },
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "object",
+                        "properties": {
+                            "limit": {
+                                "type": "integer",
+                                "description": "Number of Ask HN stories to retrieve",
+                                "default": 10
+                            }
+                        }
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        {
+            "name": "HACKERNEWS__GET_SHOW_STORIES",
+            "description": "Retrieve Show HN stories",
+            "tags": ["hackernews", "stories", "show"],
+            "visibility": ["public"],
+            "active": true,
+            "protocol": "rest",
+            "protocol_data": {
+                "method": "GET",
+                "path": "/showstories.json",
+                "server_url": "https://hacker-news.firebaseio.com/v0"
+            },
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "object",
+                        "properties": {
+                            "limit": {
+                                "type": "integer",
+                                "description": "Number of Show HN stories to retrieve",
+                                "default": 10
+                            }
+                        }
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        {
+            "name": "HACKERNEWS__GET_JOB_STORIES",
+            "description": "Retrieve job postings from Hacker News",
+            "tags": ["hackernews", "stories", "jobs"],
+            "visibility": ["public"],
+            "active": true,
+            "protocol": "rest",
+            "protocol_data": {
+                "method": "GET",
+                "path": "/jobstories.json",
+                "server_url": "https://hacker-news.firebaseio.com/v0"
+            },
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "object",
+                        "properties": {
+                            "limit": {
+                                "type": "integer",
+                                "description": "Number of job stories to retrieve",
+                                "default": 10
+                            }
+                        }
+                    }
+                },
+                "additionalProperties": false
+            }
+        }
+    ]
+}
