@@ -1,0 +1,23 @@
+{
+  "name": "STRIPE",
+  "display_name": "STRIPE",
+  "logo": "https://raw.githubusercontent.com/aipotheosis-labs/aipolabs-icons/refs/heads/main/apps/STRIPE.svg",
+  "provider": "Stripe, Inc.",
+  "version": "2022-06-28",
+  "description": "Millions of companies of all sizes use Stripe online and in person to accept payments, send payouts, automate financial processes, and grow revenue.",
+  "security_schemes": {
+    "api_key": {
+      "location": "header",
+      "name": "Authorization",
+      "prefix": "Basic"
+    }
+  },
+  "default_security_credentials_by_scheme": {},
+  "categories": [
+    "marketing",
+    "productivity",
+    "payment"
+  ],
+  "visibility": "public",
+  "active": true
+}
