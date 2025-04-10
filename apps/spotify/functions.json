@@ -1,0 +1,197 @@
+[
+  {
+    "name": "SPOTIFY__GET_CURRENT_USER_PROFILE",
+    "description": "Get detailed profile information about the current user (including the current user's username).",
+    "tags": [
+      "spotify",
+      "user-profile"
+    ],
+    "visibility": "public",
+    "active": true,
+    "protocol": "rest",
+    "protocol_data": {
+      "method": "GET",
+      "path": "/me",
+      "server_url": "https://api.spotify.com/v1"
+    },
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "header": {
+          "type": "object",
+          "description": "header parameters",
+          "properties": {
+            "Authorization": {
+              "type": "string",
+              "description": "A valid access token from the Spotify Accounts service."
+            }
+          },
+          "required": [
+            "Authorization"
+          ],
+          "visible": [
+            "Authorization"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "header"
+      ],
+      "visible": [],
+      "additionalProperties": false
+    },
+    "responses": {
+      "200": {
+        "description": "A user object on success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "country": {
+                  "type": "string",
+                  "description": "The country of the user, as set in the user's account profile."
+                },
+                "display_name": {
+                  "type": "string",
+                  "description": "The name displayed on the user's profile."
+                },
+                "email": {
+                  "type": "string",
+                  "description": "The user's email address, as entered by the user when creating their account."
+                },
+                "explicit_content": {
+                  "type": "object",
+                  "properties": {
+                    "filter_enabled": {
+                      "type": "boolean",
+                      "description": "When true, indicates that explicit content should not be played."
+                    },
+                    "filter_locked": {
+                      "type": "boolean",
+                      "description": "When true, indicates that the explicit content setting is locked and can't be changed by the user."
+                    }
+                  }
+                },
+                "external_urls": {
+                  "type": "object",
+                  "properties": {
+                    "spotify": {
+                      "type": "string",
+                      "description": "The Spotify URL for the object."
+                    }
+                  }
+                },
+                "followers": {
+                  "type": "object",
+                  "properties": {
+                    "href": {
+                      "type": "string",
+                      "description": "A link to the Web API endpoint providing full details of the followers; null if not available."
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "The total number of followers."
+                    }
+                  }
+                },
+                "href": {
+                  "type": "string",
+                  "description": "A link to the Web API endpoint for this user."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "The Spotify user ID for the user."
+                },
+                "images": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "url": {
+                        "type": "string",
+                        "description": "The source URL of the image."
+                      },
+                      "height": {
+                        "type": "integer",
+                        "description": "The image height in pixels."
+                      },
+                      "width": {
+                        "type": "integer",
+                        "description": "The image width in pixels."
+                      }
+                    }
+                  },
+                  "description": "The user's profile image."
+                },
+                "product": {
+                  "type": "string",
+                  "description": "The user's Spotify subscription level."
+                },
+                "type": {
+                  "type": "string",
+                  "description": "The object type: 'user'"
+                },
+                "uri": {
+                  "type": "string",
+                  "description": "The Spotify URI for the user."
+                }
+              }
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "Bad OAuth request (wrong consumer key, bad nonce, expired timestamp...).",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "The HTTP status code."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A short description of the cause of the error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "429": {
+        "description": "The app has exceeded its rate limits.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "The HTTP status code."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A short description of the cause of the error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]

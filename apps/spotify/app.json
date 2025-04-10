@@ -1,0 +1,31 @@
+{
+  "name": "SPOTIFY",
+  "display_name": "Spotify",
+  "logo": "",
+  "provider": "Spotify AB",
+  "version": "2024-04-08",
+  "description": "Spotify is a digital music service that gives you access to millions of songs.",
+  "security_schemes": {
+    "oauth2": {
+      "location": "header",
+      "name": "Authorization",
+      "prefix": "Bearer",
+      "client_id": "{{ AIPOLABS_SPOTIFY_APP_CLIENT_ID }}",
+      "client_secret": "{{ AIPOLABS_SPOTIFY_APP_CLIENT_SECRET }}",
+      "response_type": "code",
+      "scope": "",
+      "authorize_url": "https://accounts.spotify.com/authorize",
+      "access_token_url": "https://accounts.spotify.com/api/token",
+      "refresh_token_url": "https://accounts.spotify.com/api/token",
+      "redirect_uri": "{{ AIPOLABS_SPOTIFY_CALLBACK_HOST }}/callback"
+    }
+  },
+  "default_security_credentials_by_scheme": {},
+  "categories": [
+    "Music",
+    "Podcast",
+    "Audiobook"
+  ],
+  "visibility": "public",
+  "active": true
+}
