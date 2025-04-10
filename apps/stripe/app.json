@@ -1,0 +1,23 @@
+{
+    "name": "STRIPE",
+    "display_name": "Stripe",
+    "logo": "https://raw.githubusercontent.com/aipotheosis-labs/aipolabs-icons/refs/heads/main/apps/stripe.svg",
+    "provider": "Stripe",
+    "version": "1.0.0",
+    "description": "Stripe API for managing payments, customers, and subscriptions.",
+    "security_schemes": {
+        "api_key": {
+            "type": "apiKey",
+            "location": "header",
+            "name": "Authorization",
+            "prefix": "Bearer"
+        }
+    },
+    "default_security_credentials_by_scheme": {},
+    "categories": [
+        "payment",
+        "billing"
+    ],
+    "visibility": "public",
+    "active": true
+} 

@@ -1,0 +1,386 @@
+[
+    {
+        "name": "STRIPE__CREATE_CUSTOMER",
+        "description": "Create a new customer in Stripe",
+        "tags": [
+            "customer",
+            "create"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "POST",
+            "path": "/v1/customers",
+            "server_url": "https://api.stripe.com"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content-Type header",
+                            "default": "application/x-www-form-urlencoded"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "Content-Type"
+                    ],
+                    "visible": []
+                },
+                "body": {
+                    "type": "object",
+                    "description": "Customer creation parameters",
+                    "properties": {
+                        "email": {
+                            "type": "string",
+                            "description": "Customer's email address"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Customer's full name"
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "An arbitrary string attached to the customer"
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "description": "Set of key-value pairs that you can attach to a customer object",
+                            "properties": {},
+                            "required": [],
+                            "visible": [],
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": [],
+                    "visible": [
+                        "email",
+                        "name",
+                        "description"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header",
+                "body"
+            ],
+            "visible": [
+                "body"
+            ],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "STRIPE__UPDATE_CUSTOMER",
+        "description": "Update an existing customer in Stripe",
+        "tags": [
+            "customer",
+            "update"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "POST",
+            "path": "/v1/customers/{id}",
+            "server_url": "https://api.stripe.com"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content-Type header",
+                            "default": "application/x-www-form-urlencoded"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "Content-Type"
+                    ],
+                    "visible": []
+                },
+                "path": {
+                    "type": "object",
+                    "description": "Path parameters",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "description": "The ID of the customer to update"
+                        }
+                    },
+                    "required": [
+                        "id"
+                    ],
+                    "visible": [
+                        "id"
+                    ],
+                    "additionalProperties": false
+                },
+                "body": {
+                    "type": "object",
+                    "description": "Customer update parameters",
+                    "properties": {
+                        "email": {
+                            "type": "string",
+                            "description": "Customer's email address"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Customer's full name"
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "An arbitrary string attached to the customer"
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "description": "Set of key-value pairs that you can attach to a customer object",
+                            "properties": {},
+                            "required": [],
+                            "visible": [],
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": [],
+                    "visible": [
+                        "email",
+                        "name",
+                        "description"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header",
+                "path",
+                "body"
+            ],
+            "visible": [
+                "path",
+                "body"
+            ],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "STRIPE__RETRIEVE_CUSTOMER",
+        "description": "Retrieve a customer's details from Stripe",
+        "tags": [
+            "customer",
+            "retrieve"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/v1/customers/{id}",
+            "server_url": "https://api.stripe.com"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content-Type header",
+                            "default": "application/x-www-form-urlencoded"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "Content-Type"
+                    ],
+                    "visible": []
+                },
+                "path": {
+                    "type": "object",
+                    "description": "Path parameters",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "description": "The ID of the customer to retrieve"
+                        }
+                    },
+                    "required": [
+                        "id"
+                    ],
+                    "visible": [
+                        "id"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header",
+                "path"
+            ],
+            "visible": [
+                "path"
+            ],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "STRIPE__LIST_CUSTOMERS",
+        "description": "List all customers in Stripe",
+        "tags": [
+            "customer",
+            "list"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/v1/customers",
+            "server_url": "https://api.stripe.com"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content-Type header",
+                            "default": "application/x-www-form-urlencoded"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "Content-Type"
+                    ],
+                    "visible": []
+                },
+                "query": {
+                    "type": "object",
+                    "description": "Query parameters",
+                    "properties": {
+                        "limit": {
+                            "type": "integer",
+                            "description": "A limit on the number of objects to be returned",
+                            "default": 10
+                        },
+                        "starting_after": {
+                            "type": "string",
+                            "description": "A cursor for use in pagination"
+                        },
+                        "ending_before": {
+                            "type": "string",
+                            "description": "A cursor for use in pagination"
+                        }
+                    },
+                    "required": [],
+                    "visible": [
+                        "limit",
+                        "starting_after",
+                        "ending_before"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header"
+            ],
+            "visible": [
+                "query"
+            ],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "STRIPE__SEARCH_CUSTOMERS",
+        "description": "Search for customers in Stripe",
+        "tags": [
+            "customer",
+            "search"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/v1/customers/search",
+            "server_url": "https://api.stripe.com"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content-Type header",
+                            "default": "application/x-www-form-urlencoded"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "Content-Type"
+                    ],
+                    "visible": []
+                },
+                "query": {
+                    "type": "object",
+                    "description": "Search query parameters",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "The search query string"
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "description": "A limit on the number of objects to be returned",
+                            "default": 10
+                        },
+                        "page": {
+                            "type": "string",
+                            "description": "A cursor for use in pagination"
+                        }
+                    },
+                    "required": [
+                        "query"
+                    ],
+                    "visible": [
+                        "query",
+                        "limit",
+                        "page"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header",
+                "query"
+            ],
+            "visible": [
+                "query"
+            ],
+            "additionalProperties": false
+        }
+    }
+] 
