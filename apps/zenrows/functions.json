@@ -1,0 +1,374 @@
+[
+    {
+        "name": "ZENROWS__SCRAPE_WEBPAGE",
+        "description": "Scrape content from a specified webpage using ZenRows Universal Scraper API. Returns the raw HTML content of the target URL.",
+        "tags": [
+            "web_scraping",
+            "data_extraction",
+            "automation"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/v1/",
+            "server_url": "https://api.zenrows.com"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content-Type header",
+                            "default": "application/json"
+                        },
+                        "Accept": {
+                            "type": "string",
+                            "description": "Accept header specifying the response format",
+                            "default": "text/html"
+                        }
+                    },
+                    "required": [
+                        "Content-Type"
+                    ],
+                    "visible": [],
+                    "additionalProperties": false
+                },
+                "query": {
+                    "type": "object",
+                    "description": "Query parameters for scraping the webpage",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "The URL of the webpage to scrape (e.g., 'https://www.bilibili.com')",
+                            "format": "uri"
+                        }
+                    },
+                    "required": [
+                        "url"
+                    ],
+                    "visible": [
+                        "url"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header",
+                "query"
+            ],
+            "visible": [
+                "query"
+            ],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "ZENROWS__DISCOVER_AMAZON_PRODUCTS",
+        "description": "Navigate through Amazon search results or category pages to collect product information such as titles, prices, and URLs using ZenRows Amazon Discovery API.",
+        "tags": [
+            "web_scraping",
+            "ecommerce",
+            "data_extraction"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/v1/targets/amazon/discovery/",
+            "server_url": "https://ecommerce.api.zenrows.com"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content-Type header",
+                            "default": "application/json"
+                        },
+                        "Accept": {
+                            "type": "string",
+                            "description": "Accept header specifying the response format",
+                            "default": "application/json"
+                        }
+                    },
+                    "required": [
+                        "Content-Type"
+                    ],
+                    "visible": [],
+                    "additionalProperties": false
+                },
+                "query": {
+                    "type": "object",
+                    "description": "Query parameters for discovering Amazon product information",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "The Amazon search or category URL to scrape (e.g., 'https://www.amazon.com/s?k=Echo+Dot')",
+                            "format": "uri"
+                        }
+                    },
+                    "required": [
+                        "url"
+                    ],
+                    "visible": [
+                        "url"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header",
+                "query"
+            ],
+            "visible": [
+                "query"
+            ],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "ZENROWS__SCRAPE_WITH_JS_RENDER",
+        "description": "Scrape content from a webpage with JavaScript rendering enabled using ZenRows Universal Scraper API. Returns the rendered HTML content.",
+        "tags": [
+            "web_scraping",
+            "javascript",
+            "data_extraction"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/v1/",
+            "server_url": "https://api.zenrows.com"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content-Type header",
+                            "default": "application/json"
+                        },
+                        "Accept": {
+                            "type": "string",
+                            "description": "Accept header specifying the response format",
+                            "default": "text/html"
+                        }
+                    },
+                    "required": [
+                        "Content-Type"
+                    ],
+                    "visible": [],
+                    "additionalProperties": false
+                },
+                "query": {
+                    "type": "object",
+                    "description": "Query parameters for scraping with JavaScript rendering",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "The URL of the webpage to scrape with JS rendering (e.g., 'https://www.youtube.com')",
+                            "format": "uri"
+                        },
+                        "js_render": {
+                            "type": "boolean",
+                            "description": "Enable JavaScript rendering with a headless browser",
+                            "default": true
+                        }
+                    },
+                    "required": [
+                        "url",
+                        "js_render"
+                    ],
+                    "visible": [
+                        "url",
+                        "js_render"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header",
+                "query"
+            ],
+            "visible": [
+                "query"
+            ],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "ZENROWS__EXTRACT_DATA_WITH_CSS",
+        "description": "Extract specific data from a webpage using CSS selectors with ZenRows Universal Scraper API. Returns structured JSON data.",
+        "tags": [
+            "web_scraping",
+            "data_extraction",
+            "css_selectors"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/v1/",
+            "server_url": "https://api.zenrows.com"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content-Type header",
+                            "default": "application/json"
+                        },
+                        "Accept": {
+                            "type": "string",
+                            "description": "Accept header specifying the response format",
+                            "default": "application/json"
+                        }
+                    },
+                    "required": [
+                        "Content-Type"
+                    ],
+                    "visible": [],
+                    "additionalProperties": false
+                },
+                "query": {
+                    "type": "object",
+                    "description": "Query parameters for extracting data with CSS selectors",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "The URL of the webpage to extract data from (e.g., 'https://www.amazon.com')",
+                            "format": "uri"
+                        },
+                        "css_extractor": {
+                            "type": "string",
+                            "description": "CSS selectors for data extraction (e.g., '{\"titles\":\"h1\"}')",
+                            "default": "{\"titles\":\"h1\"}"
+                        },
+                        "js_render": {
+                            "type": "boolean",
+                            "description": "Enable JavaScript rendering with a headless browser to improve success rate on dynamic pages",
+                            "default": false
+                        }
+                    },
+                    "required": [
+                        "url",
+                        "css_extractor"
+                    ],
+                    "visible": [
+                        "url",
+                        "css_extractor",
+                        "js_render"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header",
+                "query"
+            ],
+            "visible": [
+                "query"
+            ],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "ZENROWS__SCRAPE_WITH_PREMIUM_PROXY",
+        "description": "Scrape content from a webpage using premium residential proxies with ZenRows Universal Scraper API. Returns the raw HTML content.",
+        "tags": [
+            "web_scraping",
+            "proxy",
+            "data_extraction"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/v1/",
+            "server_url": "https://api.zenrows.com"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content-Type header",
+                            "default": "application/json"
+                        },
+                        "Accept": {
+                            "type": "string",
+                            "description": "Accept header specifying the response format",
+                            "default": "text/html"
+                        }
+                    },
+                    "required": [
+                        "Content-Type"
+                    ],
+                    "visible": [],
+                    "additionalProperties": false
+                },
+                "query": {
+                    "type": "object",
+                    "description": "Query parameters for scraping with premium proxies",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "The URL of the webpage to scrape with premium proxy (e.g., 'https://www.netflix.com')",
+                            "format": "uri"
+                        },
+                        "premium_proxy": {
+                            "type": "boolean",
+                            "description": "Enable premium residential proxies",
+                            "default": true
+                        }
+                    },
+                    "required": [
+                        "url",
+                        "premium_proxy"
+                    ],
+                    "visible": [
+                        "url",
+                        "premium_proxy"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header",
+                "query"
+            ],
+            "visible": [
+                "query"
+            ],
+            "additionalProperties": false
+        }
+    }
+]
