@@ -364,7 +364,7 @@
             "required": [
                 "header",
                 "query"
-            ],
+            ], 
             "visible": [
                 "query"
             ],
