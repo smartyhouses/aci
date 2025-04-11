@@ -1,0 +1,227 @@
+[
+    {
+        "name": "GOOGLE_TASKS__TASKLIST_LIST",
+        "description": "Returns all task lists for the authenticated user.",
+        "tags": ["tasks"],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/users/@me/lists",
+            "server_url": "https://tasks.googleapis.com/tasks/v1"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "object",
+                    "description": "Query parameters for pagination and filtering.",
+                    "properties": {
+                        "maxResults": {
+                            "type": "integer",
+                            "description": "Maximum number of task lists to return (default: 100).",
+                            "default": 100
+                        },
+                        "pageToken": {
+                            "type": "string",
+                            "description": "Token for paginating results (from nextPageToken in previous response)."
+                        }
+                    },
+                    "required": [],
+                    "visible": ["maxResults", "pageToken"],
+                    "additionalProperties": false
+                }
+            },
+            "required": [],
+            "visible": ["query"],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "GOOGLE_TASKS__TASKLIST_GET",
+        "description": "Returns a specific task list by ID.",
+        "tags": ["tasks"],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/users/@me/lists/{tasklistId}",
+            "server_url": "https://tasks.googleapis.com/tasks/v1"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "object",
+                    "description": "Path parameters.",
+                    "properties": {
+                        "tasklistId": {
+                            "type": "string",
+                            "description": "ID of the task list to retrieve."
+                        }
+                    },
+                    "required": ["tasklistId"],
+                    "visible": ["tasklistId"],
+                    "additionalProperties": false
+                }
+            },
+            "required": ["path"],
+            "visible": ["path"],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "GOOGLE_TASKS__TASKS_LIST",
+        "description": "Returns tasks from a specified task list.",
+        "tags": ["tasks"],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/lists/{tasklistId}/tasks",
+            "server_url": "https://tasks.googleapis.com/tasks/v1"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "object",
+                    "description": "Path parameters.",
+                    "properties": {
+                        "tasklistId": {
+                            "type": "string",
+                            "description": "ID of the task list containing the tasks."
+                        }
+                    },
+                    "required": ["tasklistId"],
+                    "visible": ["tasklistId"],
+                    "additionalProperties": false
+                },
+                "query": {
+                    "type": "object",
+                    "description": "Query parameters for filtering tasks.",
+                    "properties": {
+                        "showCompleted": {
+                            "type": "boolean",
+                            "description": "Whether to include completed tasks (default: false).",
+                            "default": false
+                        },
+                        "dueMin": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Lower bound for task due dates (RFC3339 timestamp)."
+                        },
+                        "dueMax": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Upper bound for task due dates (RFC3339 timestamp)."
+                        }
+                    },
+                    "required": [],
+                    "visible": ["showCompleted", "dueMin", "dueMax"],
+                    "additionalProperties": false
+                }
+            },
+            "required": ["path"],
+            "visible": ["path", "query"],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "GOOGLE_TASKS__TASKS_INSERT",
+        "description": "Creates a new task in the specified task list.",
+        "tags": ["tasks"],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "POST",
+            "path": "/lists/{tasklistId}/tasks",
+            "server_url": "https://tasks.googleapis.com/tasks/v1"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "object",
+                    "description": "Path parameters.",
+                    "properties": {
+                        "tasklistId": {
+                            "type": "string",
+                            "description": "ID of the task list to add the task to."
+                        }
+                    },
+                    "required": ["tasklistId"],
+                    "visible": ["tasklistId"],
+                    "additionalProperties": false
+                },
+                "body": {
+                    "type": "object",
+                    "description": "Task properties to create.",
+                    "properties": {
+                        "title": {
+                            "type": "string",
+                            "description": "Title of the task."
+                        },
+                        "notes": {
+                            "type": "string",
+                            "description": "Optional notes or description."
+                        },
+                        "due": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Due date (RFC3339 timestamp)."
+                        }
+                    },
+                    "required": ["title"],
+                    "visible": ["title", "notes", "due"],
+                    "additionalProperties": false
+                }
+            },
+            "required": ["path", "body"],
+            "visible": ["path", "body"],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "GOOGLE_TASKS__TASKS_DELETE",
+        "description": "Deletes a task from the specified task list.",
+        "tags": ["tasks"],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "DELETE",
+            "path": "/lists/{tasklistId}/tasks/{taskId}",
+            "server_url": "https://tasks.googleapis.com/tasks/v1"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "object",
+                    "description": "Path parameters.",
+                    "properties": {
+                        "tasklistId": {
+                            "type": "string",
+                            "description": "ID of the task list containing the task."
+                        },
+                        "taskId": {
+                            "type": "string",
+                            "description": "ID of the task to delete."
+                        }
+                    },
+                    "required": ["tasklistId", "taskId"],
+                    "visible": ["tasklistId", "taskId"],
+                    "additionalProperties": false
+                }
+            },
+            "required": ["path"],
+            "visible": ["path"],
+            "additionalProperties": false
+        }
+    }
+]
