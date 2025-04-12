@@ -12,8 +12,8 @@
         "protocol": "rest",
         "protocol_data": {
             "method": "GET",
-            "path": "/data/2.5/weather",
-            "server_url": "https://api.openweathermap.org"
+            "path": "/weather",
+            "server_url": "https://api.openweathermap.org/data/2.5"
         },
         "parameters": {
             "type": "object",
@@ -133,8 +133,8 @@
         "protocol": "rest",
         "protocol_data": {
             "method": "GET",
-            "path": "/data/2.5/forecast",
-            "server_url": "https://api.openweathermap.org"
+            "path": "/forecast",
+            "server_url": "https://api.openweathermap.org/data/2.5"
         },
         "parameters": {
             "type": "object",
@@ -262,8 +262,8 @@
         "protocol": "rest",
         "protocol_data": {
             "method": "GET",
-            "path": "/data/2.5/weather",
-            "server_url": "https://api.openweathermap.org"
+            "path": "/weather",
+            "server_url": "https://api.openweathermap.org/data/2.5"
         },
         "parameters": {
             "type": "object",
