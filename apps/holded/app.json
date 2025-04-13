@@ -8,7 +8,7 @@
     "security_schemes": {
         "api_key": {
             "location": "header",
-            "name": "X-API-KEY",
+            "name": "Authorization",
             "prefix": null
         }
     },
