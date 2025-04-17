@@ -1,0 +1,32 @@
+{
+    "name": "LINKEDIN",
+    "display_name": "LinkedIn",
+    "logo": "https://raw.githubusercontent.com/aipotheosis-labs/aipolabs-icons/refs/heads/main/apps/linkedin.svg",
+    "provider": "LinkedIn",
+    "version": "2022-11-28",
+    "description": "The LinkedIn API allows you to interact with LinkedIn programmatically, including profile management, posts, comments, and more.",
+    "security_schemes": {
+        "oauth2": {
+            "location": "header",
+            "name": "Authorization",
+            "prefix": "Bearer",
+            "client_id": "{{ AIPOLABS_LINKEDIN_APP_CLIENT_ID }}",
+            "client_secret": "{{ AIPOLABS_LINKEDIN_APP_CLIENT_SECRET }}",
+            "scope": "openid profile email w_member_social",
+            "authorize_url": "https://www.linkedin.com/oauth/v2/authorization",
+            "access_token_url": "https://www.linkedin.com/oauth/v2/accessToken",
+            "refresh_token_url": "",
+            "token_endpoint_auth_method": "client_secret_post",
+            "prompt": "consent",
+            "code_challenge_method": "S256"
+        }
+    },
+    "default_security_credentials_by_scheme": {},
+    "categories": [
+        "social",
+        "professional",
+        "networking"
+    ],
+    "visibility": "public",
+    "active": true
+}

@@ -1,0 +1,274 @@
+[
+    {
+        "name": "LINKEDIN__GET_USER_INFO",
+        "description": "Get authenticated user details including ID, name, email, and profile picture using the OpenID Connect userinfo endpoint.",
+        "tags": [
+            "linkedin",
+            "profile",
+            "identity",
+            "openid"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/userinfo",
+            "server_url": "https://api.linkedin.com/v2"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content type header",
+                            "default": "application/json"
+                        }
+                    },
+                    "required": [
+                        "Content-Type"
+                    ],
+                    "visible": [],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header"
+            ],
+            "visible": [],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "LINKEDIN__CREATE_SHARE",
+        "description": "Create a share on LinkedIn with text, URLs, or images. This function allows you to post content to your LinkedIn network as the authenticated user.",
+        "tags": [
+            "linkedin",
+            "social",
+            "post",
+            "share"
+        ],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "POST",
+            "path": "/ugcPosts",
+            "server_url": "https://api.linkedin.com/v2"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "object",
+                    "description": "Headers for the HTTP request",
+                    "properties": {
+                        "Content-Type": {
+                            "type": "string",
+                            "description": "Content type header",
+                            "default": "application/json"
+                        },
+                        "X-Restli-Protocol-Version": {
+                            "type": "string",
+                            "description": "Required LinkedIn API protocol version",
+                            "default": "2.0.0"
+                        }
+                    },
+                    "required": [
+                        "Content-Type",
+                        "X-Restli-Protocol-Version"
+                    ],
+                    "visible": [],
+                    "additionalProperties": false
+                },
+                "body": {
+                    "type": "object",
+                    "description": "Share content parameters",
+                    "properties": {
+                        "author": {
+                            "type": "string",
+                            "description": "Person URN of the member creating the share (retrieved from GET /v2/userinfo)"
+                        },
+                        "lifecycleState": {
+                            "type": "string",
+                            "description": "State of the share (always PUBLISHED for creating a share)",
+                            "default": "PUBLISHED",
+                            "enum": [
+                                "PUBLISHED"
+                            ]
+                        },
+                        "specificContent": {
+                            "type": "object",
+                            "description": "The content of the share",
+                            "properties": {
+                                "com.linkedin.ugc.ShareContent": {
+                                    "type": "object",
+                                    "properties": {
+                                        "shareCommentary": {
+                                            "type": "object",
+                                            "properties": {
+                                                "text": {
+                                                    "type": "string",
+                                                    "description": "The text content of your share"
+                                                }
+                                            },
+                                            "required": [
+                                                "text"
+                                            ],
+                                            "visible": [
+                                                "text"
+                                            ],
+                                            "additionalProperties": false
+                                        },
+                                        "shareMediaCategory": {
+                                            "type": "string",
+                                            "description": "The type of media being shared",
+                                            "enum": [
+                                                "NONE",
+                                                "ARTICLE",
+                                                "IMAGE"
+                                            ],
+                                            "default": "NONE"
+                                        },
+                                        "media": {
+                                            "type": "array",
+                                            "description": "Media assets attached to the share (required if shareMediaCategory is not NONE)",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "status": {
+                                                        "type": "string",
+                                                        "description": "Status of the media (must be READY)",
+                                                        "default": "READY",
+                                                        "enum": [
+                                                            "READY"
+                                                        ]
+                                                    },
+                                                    "description": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "text": {
+                                                                "type": "string",
+                                                                "description": "Description of the media"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "text"
+                                                        ],
+                                                        "visible": [
+                                                            "text"
+                                                        ],
+                                                        "additionalProperties": false
+                                                    },
+                                                    "originalUrl": {
+                                                        "type": "string",
+                                                        "description": "URL of the article to share (required if shareMediaCategory is ARTICLE)"
+                                                    },
+                                                    "media": {
+                                                        "type": "string",
+                                                        "description": "Digital media asset URN (required if shareMediaCategory is IMAGE)"
+                                                    },
+                                                    "title": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "text": {
+                                                                "type": "string",
+                                                                "description": "Title of the media"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "text"
+                                                        ],
+                                                        "visible": [
+                                                            "text"
+                                                        ],
+                                                        "additionalProperties": false
+                                                    }
+                                                },
+                                                "required": [
+                                                    "status"
+                                                ],
+                                                "visible": [
+                                                    "status",
+                                                    "description",
+                                                    "originalUrl",
+                                                    "media",
+                                                    "title"
+                                                ],
+                                                "additionalProperties": false
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "shareCommentary",
+                                        "shareMediaCategory"
+                                    ],
+                                    "visible": [
+                                        "shareCommentary",
+                                        "shareMediaCategory",
+                                        "media"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            },
+                            "required": [
+                                "com.linkedin.ugc.ShareContent"
+                            ],
+                            "visible": [
+                                "com.linkedin.ugc.ShareContent"
+                            ],
+                            "additionalProperties": false
+                        },
+                        "visibility": {
+                            "type": "object",
+                            "description": "Visibility restrictions for the share",
+                            "properties": {
+                                "com.linkedin.ugc.MemberNetworkVisibility": {
+                                    "type": "string",
+                                    "description": "Who can see the share",
+                                    "enum": [
+                                        "CONNECTIONS",
+                                        "PUBLIC"
+                                    ],
+                                    "default": "PUBLIC"
+                                }
+                            },
+                            "required": [
+                                "com.linkedin.ugc.MemberNetworkVisibility"
+                            ],
+                            "visible": [
+                                "com.linkedin.ugc.MemberNetworkVisibility"
+                            ],
+                            "additionalProperties": false
+                        }
+                    },
+                    "required": [
+                        "author",
+                        "lifecycleState",
+                        "specificContent",
+                        "visibility"
+                    ],
+                    "visible": [
+                        "author",
+                        "lifecycleState",
+                        "specificContent",
+                        "visibility"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "header",
+                "body"
+            ],
+            "visible": [
+                "body"
+            ],
+            "additionalProperties": false
+        }
+    }
+]
