@@ -79,8 +79,7 @@
                         }
                     },
                     "required": [
-                        "Content-Type",
-                        "X-Restli-Protocol-Version"
+                        "Content-Type"
                     ],
                     "visible": [],
                     "additionalProperties": false
