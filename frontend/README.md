@@ -48,21 +48,10 @@ The Dev Portal enables developers to create and manage their projects efficientl
    Some libraries are stilling upgrading to React 19, so we need to use the
    `--legacy-peer-deps` flag in the mean time.)
 
-1. **Configure Environment Variables:**
-   Create a `.env` file with the following variables in it:
+1. **Configure Environment Variables:** Copy `.env.example` to `.env`
 
-   - NEXT_PUBLIC_API_URL: The URL of the Aipolabs backend API server
-   - NEXT_PUBLIC_DEV_PORTAL_URL: The URL of the Dev Portal
-   - NEXT_PUBLIC_ENVIRONMENT: The environment
-   - NEXT_PUBLIC_AUTH_URL: PropelAuth test org auth URL
-
-   You can just set it to the following in local development:
-
-   ```sh
-   NEXT_PUBLIC_API_URL=http://localhost:8000
-   NEXT_PUBLIC_DEV_PORTAL_URL=http://localhost:3000
-   NEXT_PUBLIC_ENVIRONMENT=local
-   NEXT_PUBLIC_AUTH_URL=https://8367878.propelauthtest.com # or your own auth url if you created your own PropelAuth org
+   ```bash
+   cp .env.example .env
    ```
 
 1. **Start the application:**
