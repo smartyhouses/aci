@@ -1,12 +1,22 @@
 "use client";
 
+import { useMetaInfo } from "@/components/context/metainfo";
 import { Button } from "@/components/ui/button";
 // import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { createCustomerPortalSession } from "@/lib/api/billing";
+import { useSubscription } from "@/lib/tanstack-query-hooks/use-subscription";
+import { PlanName } from "@/lib/types/billing";
 import { useLogoutFunction } from "@propelauth/react";
+import Link from "next/link";
+import { BsStars } from "react-icons/bs";
+import { RiUserSettingsLine } from "react-icons/ri";
 
 export default function AccountPage() {
+  const { user, activeOrg, accessToken } = useMetaInfo();
   const logoutFn = useLogoutFunction();
+
+  const { data: subscription } = useSubscription();
 
   return (
     <div>
@@ -18,16 +28,11 @@ export default function AccountPage() {
 
       <div className="container p-4 space-y-4">
         {/* User Details Section */}
-        {/* <div className="flex flex-row">
+        <div className="flex flex-row">
           <div className="flex flex-col items-left w-80">
             <label className="font-semibold">User Name</label>
-            <p className="text-sm text-muted-foreground">
-              Update your user name here
-            </p>
           </div>
-          <div>
-            <Input defaultValue="Tom" className="w-96" readOnly />
-          </div>
+          <div className="flex items-center px-2">{`${user.firstName} ${user.lastName}`}</div>
         </div>
 
         <Separator />
@@ -35,18 +40,13 @@ export default function AccountPage() {
         <div className="flex flex-row">
           <div className="flex flex-col items-left w-80">
             <label className="font-semibold">Email</label>
-            <p className="text-sm text-muted-foreground">
-              Update your email here
-            </p>
           </div>
-          <div>
-            <Input defaultValue="email@domain.com" className="w-96" readOnly />
-          </div>
+          <div className="flex items-center px-2">{user.email}</div>
         </div>
 
         <Separator />
 
-        <div className="flex flex-row">
+        {/* <div className="flex flex-row">
           <div className="flex flex-col items-left w-80">
             <label className="font-semibold">Password</label>
             <p className="text-sm text-muted-foreground">
@@ -169,7 +169,7 @@ export default function AccountPage() {
         <Separator /> */}
 
         {/* Subscription Section */}
-        {/* <div className="flex flex-row">
+        <div className="flex flex-row">
           <div className="flex flex-col items-left w-80">
             <label className="font-semibold">Subscription</label>
             <p className="text-sm text-muted-foreground">
@@ -179,19 +179,43 @@ export default function AccountPage() {
           <div className="flex-1">
             <div className="flex justify-between p-4">
               <div>
-                <div className="font-medium">You are Premium</div>
-                <div className="text-sm text-muted-foreground">
-                  You can cancel your plan{" "}
-                  <button className="text-blue-500 hover:underline">
-                    here
-                  </button>
+                <div className="font-medium">
+                  You are on the {subscription?.plan} plan
                 </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex-1">
+            <div className="flex justify-between p-4">
+              <div>
+                {subscription?.plan === PlanName.Free ? (
+                  <Link href="/pricing">
+                    <Button variant="outline">
+                      <BsStars />
+                      Subscribe Now
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={async () => {
+                      const url = await createCustomerPortalSession(
+                        accessToken,
+                        activeOrg.orgId,
+                      );
+                      window.location.href = url;
+                    }}
+                  >
+                    <RiUserSettingsLine />
+                    Manage Subscription
+                  </Button>
+                )}
               </div>
             </div>
           </div>
         </div>
 
-        <Separator /> */}
+        <Separator />
 
         {/* Payment Method Section */}
         {/* <div className="flex flex-row">

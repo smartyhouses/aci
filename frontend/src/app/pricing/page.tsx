@@ -1,0 +1,234 @@
+"use client";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { IoMdCheckmark } from "react-icons/io";
+import { Interval, PlanName } from "@/lib/types/billing";
+import { useSubscription } from "@/lib/tanstack-query-hooks/use-subscription";
+import { createCheckoutSession } from "@/lib/api/billing";
+import { useMetaInfo } from "@/components/context/metainfo";
+import { useState } from "react";
+
+const tiers = [
+  {
+    name: PlanName.Free,
+    id: "tier-free",
+    href: "#", // Placeholder link
+    priceMonthly: "$0",
+    priceYearly: "$0",
+    description: "Perfect for getting started & simple projects.",
+    features: [
+      "3 End user accounts",
+      "1K API calls/month",
+      "5 Agent credentials",
+      "1 Developer seat",
+      "1 week Log retention",
+      "Discord Support",
+    ],
+    buttonText: "Start for Free",
+    buttonVariant: "default" as const,
+  },
+  {
+    name: PlanName.Starter,
+    id: "tier-starter",
+    href: process.env.NEXT_PUBLIC_SUBSCRIPTION_STARTER_LINK_MONTHLY,
+    priceMonthly: "$29",
+    priceYearly: "$296",
+    discount: "15% discount on annual",
+    description: "For growing applications needing more capacity.",
+    features: [
+      "250 End user accounts",
+      "100K API calls/month",
+      "2500 Agent credentials",
+      "5 Developer seats",
+      "Custom OAuth credentials",
+      "1 month Log retention",
+    ],
+    buttonText: "Get Started",
+    buttonVariant: "default" as const,
+  },
+  {
+    name: PlanName.Team,
+    id: "tier-team",
+    href: process.env.NEXT_PUBLIC_SUBSCRIPTION_TEAM_LINK_MONTHLY,
+    priceMonthly: "$99",
+    priceYearly: "$1010",
+    discount: "15% discount on annual",
+    description: "Ideal for teams needing collaboration features.",
+    features: [
+      "1500 End user accounts",
+      "200K API calls/month",
+      "Unlimited Agent credentials",
+      "10 Developer seats",
+      "Custom OAuth credentials",
+      "1 month Log retention",
+    ],
+    mostPopular: true,
+    buttonText: "Get Started",
+    buttonVariant: "default" as const,
+  },
+  {
+    name: PlanName.Enterprise,
+    id: "tier-enterprise",
+    href: "#", // Placeholder link
+    priceMonthly: "Custom",
+    description: "For large-scale applications with specific needs.",
+    features: [
+      "Custom End user accounts",
+      "Custom API calls",
+      "Unlimited Agent credentials",
+      "Custom Developer seats",
+      "Custom OAuth credentials",
+      "Custom Log retention",
+      "Dedicated Rep Support",
+    ],
+    buttonText: "Contact Us",
+    buttonVariant: "outline" as const,
+  },
+];
+
+export default function PricingPage() {
+  const { data: subscription } = useSubscription();
+  const { accessToken, activeOrg } = useMetaInfo();
+  const [isYearly, setIsYearly] = useState(false);
+
+  if (subscription && subscription.plan !== PlanName.Free) {
+    window.location.href = "/account";
+  }
+
+  // TODO: Enterprise button should have a mail popup
+  return (
+    <div className="bg-background text-foreground py-10 sm:py-14">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
+            Pricing plans for teams of all sizes
+          </p>
+        </div>
+        <p className="mx-auto mt-5 max-w-2xl text-center text-lg leading-8 text-muted-foreground">
+          Choose an affordable plan that&apos;s packed with the best features
+          for engaging your audience, creating customer loyalty, and driving
+          sales.
+        </p>
+        <div className="flex justify-center mt-8">
+          <div className="inline-flex rounded-md shadow-sm bg-muted p-1">
+            <button
+              onClick={() => setIsYearly(false)}
+              className={`px-6 py-2 rounded-l-md text-sm font-medium focus:z-10 focus:outline-none transition-colors duration-150 ${
+                !isYearly
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-background/50"
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setIsYearly(true)}
+              className={`px-6 py-2 rounded-r-md text-sm font-medium focus:z-10 focus:outline-none transition-colors duration-150 ${
+                isYearly
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-background/50"
+              }`}
+            >
+              Yearly <span className="text-xs">(Save 15%)</span>
+            </button>
+          </div>
+        </div>
+        <div className="isolate mx-auto mt-14 grid grid-cols-1 gap-4 sm:mt-16 lg:mx-0 lg:max-w-none lg:grid-cols-2 xl:grid-cols-4">
+          {tiers.map((tier) => (
+            <Card
+              key={tier.id}
+              className={`flex flex-col justify-between transition-all duration-200 hover:shadow-lg hover:scale-105 ${
+                tier.mostPopular ? "border-primary ring-2 ring-primary" : ""
+              }`}
+            >
+              <CardHeader className="p-6">
+                <div className="flex items-center justify-between gap-x-4">
+                  <CardTitle className="text-lg">
+                    {tier.name.charAt(0).toUpperCase() + tier.name.slice(1)}
+                  </CardTitle>
+                  {tier.mostPopular ? (
+                    <Badge variant="secondary">Most popular</Badge>
+                  ) : null}
+                </div>
+                <CardDescription className="pt-2">
+                  {tier.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-1 flex-col justify-between p-6 pt-0">
+                <div>
+                  <p className="mt-0 flex items-baseline gap-x-1">
+                    <span className="text-4xl font-bold tracking-tight">
+                      {isYearly && tier.priceYearly
+                        ? tier.priceYearly
+                        : tier.priceMonthly}
+                    </span>
+                    {(isYearly && tier.priceYearly
+                      ? tier.priceYearly
+                      : tier.priceMonthly) !== "Custom" && (
+                      <span className="text-sm font-semibold leading-6 text-muted-foreground">
+                        /{isYearly ? "year" : "month"}
+                      </span>
+                    )}
+                  </p>
+                  {isYearly && tier.discount && (
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                      {tier.discount}
+                    </p>
+                  )}
+                  <ul
+                    role="list"
+                    className="mt-6 space-y-2.5 text-sm leading-6 text-foreground"
+                  >
+                    {tier.features.map((feature) => (
+                      <li key={feature} className="flex gap-x-3">
+                        <IoMdCheckmark
+                          className="h-6 w-5 flex-none text-primary"
+                          aria-hidden="true"
+                        />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+              <CardFooter className="p-6 pt-0 mt-auto">
+                <Button
+                  className="w-full mt-4"
+                  variant={tier.buttonVariant}
+                  disabled={subscription?.plan === tier.name}
+                  onClick={async () => {
+                    const url = await createCheckoutSession(
+                      accessToken,
+                      activeOrg.orgId,
+                      tier.name,
+                      isYearly ? Interval.Year : Interval.Month,
+                    );
+                    window.location.href = url;
+                  }}
+                >
+                  {subscription?.plan === tier.name ? (
+                    <div className="flex items-center gap-1">
+                      <IoMdCheckmark className="text-white" />
+                      Current Plan
+                    </div>
+                  ) : (
+                    tier.buttonText
+                  )}
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
