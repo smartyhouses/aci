@@ -16,6 +16,8 @@ import { useSubscription } from "@/lib/tanstack-query-hooks/use-subscription";
 import { createCheckoutSession } from "@/lib/api/billing";
 import { useMetaInfo } from "@/components/context/metainfo";
 import { useState } from "react";
+import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const tiers = [
   {
@@ -99,6 +101,7 @@ export default function PricingPage() {
   const { data: subscription } = useSubscription();
   const { accessToken, activeOrg } = useMetaInfo();
   const [isYearly, setIsYearly] = useState(false);
+  const router = useRouter();
 
   if (subscription && subscription.plan !== PlanName.Free) {
     window.location.href = "/account";
@@ -106,7 +109,16 @@ export default function PricingPage() {
 
   // TODO: Enterprise button should have a mail popup
   return (
-    <div className="bg-background text-foreground py-10 sm:py-14">
+    <div className="relative bg-background text-foreground py-10 sm:py-14 min-h-screen">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute top-6 right-6 text-muted-foreground hover:text-foreground"
+        onClick={() => router.push("/account")}
+        aria-label="Close pricing page"
+      >
+        <X className="h-6 w-6" />
+      </Button>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           <p className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
