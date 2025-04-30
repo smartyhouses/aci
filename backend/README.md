@@ -18,7 +18,8 @@ The backend component of ACI.dev provides the server infrastructure, API endpoin
     - [Running Tests](#running-tests)
   - [Database Management](#database-management)
     - [Working with Migrations](#working-with-migrations)
-  - [Webhooks (for local end-to-end development with frontend)](#webhooks-for-local-end-to-end-development-with-frontend)
+  - [PropelAuth Webhooks (for local end-to-end development with frontend)](#propelauth-webhooks-for-local-end-to-end-development-with-frontend)
+  - [Stripe Webhooks](#stripe-webhooks)
   - [Admin CLI](#admin-cli)
   - [Contributing](#contributing)
   - [License](#license)
@@ -141,6 +142,9 @@ For VS Code users, configure Ruff formatter:
 
 10. (Optional) If you are developing the dev portal, follow the instructions on [frontend README](../frontend/README.md) to start the dev portal.
 
+11. (Optional) If you are developing Stripe related billing features, follow the
+    [Stripe Webhooks](#stripe-webhooks) section.
+
 ### Running Tests
 
 Ensure the `db` service is running and the database is empty (in case you have seeded the db in the previous steps) before running tests:
@@ -185,7 +189,7 @@ When making changes to database models:
    docker compose exec runner alembic downgrade -1
    ```
 
-## Webhooks (for local end-to-end development with frontend)
+## PropelAuth Webhooks (for local end-to-end development with frontend)
 
 If you are developing the dev portal, you would need a real `user` and `org` in the
 PropelAuth test environment as well as a default `project` and `agent` in your local db.
@@ -220,6 +224,31 @@ the local db.
     ![svix](./images/svix-signing-secret.png)
    - Go back to the [Getting Started](#getting-started) section step 5 to bring up
      docker compose
+
+## Stripe Webhooks
+
+1. Download the [Stripe CLI](https://docs.stripe.com/stripe-cli#install)
+
+1. Log into our Stripe Sandbox with the CLI
+
+   ```shell
+   stripe login
+   ```
+
+2. Set up webhooks with the Stripe CLI and get the webhook signing secret. By default,
+all events in the Sandbox will be forwarded to the local webhook endpoint. You can also
+use `--event` flag to filter the set of events you want to listen to.
+
+   ```shell
+   stripe listen --forward-to localhost:8000/v1/billing/webhook
+   > Ready! You are using Stripe API Version [2025-02-24.acacia]. Your webhook signing secret is whsec_3b397734bb0362eac34a9611cc842f4a8cfb8f0e38eccf7ee666b09ac3aeec52
+   ```
+
+1. Set the following two env vars in `.env`:
+
+   - `SERVER_STRIPE_SECRET_KEY`: get it from the [Stripe dashboard](https://support.stripe.com/questions/what-are-stripe-api-keys-and-how-to-find-them)
+   - `SERVER_STRIPE_WEBHOOK_SIGNING_SECRET`: get it from the output of the `stripe
+     listen` command you just executed
 
 ## Admin CLI
 

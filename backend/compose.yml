@@ -43,6 +43,8 @@ services:
       - SERVER_OPENAI_API_KEY=${SERVER_OPENAI_API_KEY?}
       - SERVER_PROPELAUTH_API_KEY=${SERVER_PROPELAUTH_API_KEY?}
       - SERVER_SVIX_SIGNING_SECRET=${SERVER_SVIX_SIGNING_SECRET:-<svix-signing-secret>}
+      - SERVER_STRIPE_SECRET_KEY=${SERVER_STRIPE_SECRET_KEY:-<stripe-secret-key>}
+      - SERVER_STRIPE_WEBHOOK_SIGNING_SECRET=${SERVER_STRIPE_WEBHOOK_SIGNING_SECRET:-<stripe-webhook-signing-secret>}
     # useful for development, changes take effect in the container without needing to rebuild the image.
     volumes:
       - ./aci/server:/workdir/aci/server
@@ -70,6 +72,8 @@ services:
       - SERVER_OPENAI_API_KEY=${SERVER_OPENAI_API_KEY?}
       - SERVER_PROPELAUTH_API_KEY=${SERVER_PROPELAUTH_API_KEY?}
       - SERVER_SVIX_SIGNING_SECRET=${SERVER_SVIX_SIGNING_SECRET:-<svix-signing-secret>}
+      - SERVER_STRIPE_SECRET_KEY=${SERVER_STRIPE_SECRET_KEY:-<stripe-secret-key>}
+      - SERVER_STRIPE_WEBHOOK_SIGNING_SECRET=${SERVER_STRIPE_WEBHOOK_SIGNING_SECRET:-<stripe-webhook-signing-secret>}
       - CLI_OPENAI_API_KEY=${CLI_OPENAI_API_KEY?}
     # Mount the local code into the container so you can run scripts / Alembic
     volumes:

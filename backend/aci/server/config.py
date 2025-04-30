@@ -63,6 +63,7 @@ ROUTER_PREFIX_LINKED_ACCOUNTS = "/v1/linked-accounts"
 ROUTER_PREFIX_AGENT = "/v1/agent"
 ROUTER_PREFIX_ANALYTICS = "/v1/analytics"
 ROUTER_PREFIX_WEBHOOKS = "/v1/webhooks"
+ROUTER_PREFIX_BILLING = "/v1/billing"
 
 # DEV PORTAL
 DEV_PORTAL_URL = check_and_get_env_variable("SERVER_DEV_PORTAL_URL")
@@ -70,3 +71,7 @@ DEV_PORTAL_URL = check_and_get_env_variable("SERVER_DEV_PORTAL_URL")
 # LOGFIRE
 LOGFIRE_WRITE_TOKEN = check_and_get_env_variable("SERVER_LOGFIRE_WRITE_TOKEN")
 LOGFIRE_READ_TOKEN = check_and_get_env_variable("SERVER_LOGFIRE_READ_TOKEN")
+
+# STRIPE
+STRIPE_SECRET_KEY = check_and_get_env_variable("SERVER_STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SIGNING_SECRET = check_and_get_env_variable("SERVER_STRIPE_WEBHOOK_SIGNING_SECRET")
