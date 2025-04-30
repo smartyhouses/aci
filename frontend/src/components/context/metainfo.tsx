@@ -1,3 +1,5 @@
+"use client";
+
 import { getProjects } from "@/lib/api/project";
 import { Project } from "@/lib/types/project";
 import {
@@ -14,8 +16,9 @@ import {
   useCallback,
 } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { UserClass } from "@propelauth/javascript";
 interface MetaInfoContextType {
+  user: UserClass;
   orgs: OrgMemberInfoClass[];
   activeOrg: OrgMemberInfoClass;
   setActiveOrg: (org: OrgMemberInfoClass) => void;
@@ -95,6 +98,7 @@ export const MetaInfoProvider = withRequiredAuthInfo<MetaInfoProviderProps>(
         {activeOrg && activeProject && accessToken ? (
           <MetaInfoContext.Provider
             value={{
+              user: userClass,
               orgs,
               activeOrg,
               setActiveOrg,

@@ -10,6 +10,8 @@ import { MetaInfoProvider } from "@/components/context/metainfo";
 import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/next";
 import { RequiredAuthProvider } from "@propelauth/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,6 +22,8 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
@@ -70,31 +74,30 @@ export default function RootLayout({
         />
 
         <link rel="manifest" href="/site.webmanifest" />
+
+        {/* <script async src="https://js.stripe.com/v3/buy-button.js"></script> */}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <RequiredAuthProvider authUrl={process.env.NEXT_PUBLIC_AUTH_URL!}>
-          {/* <UserProvider> */}
-          {/* <ProjectProvider> */}
-          <MetaInfoProvider>
-            {/* <Protected> */}
-            <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>
-                <main className="w-full h-full mr-2 border rounded-lg border-gray-400 border-opacity-30 bg-white">
-                  <Header />
-                  {children}
-                  <Analytics />
-                </main>
-              </SidebarInset>
-            </SidebarProvider>
-          </MetaInfoProvider>
-          {/* </Protected> */}
-          {/* </ProjectProvider> */}
-          <Footer />
-          {/* </UserProvider> */}
-        </RequiredAuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <RequiredAuthProvider authUrl={process.env.NEXT_PUBLIC_AUTH_URL!}>
+            <MetaInfoProvider>
+              <SidebarProvider>
+                <AppSidebar />
+                <SidebarInset>
+                  <main className="w-full h-full mr-2 border rounded-lg border-gray-400 border-opacity-30 bg-white">
+                    <Header />
+                    {children}
+                    <Analytics />
+                  </main>
+                </SidebarInset>
+              </SidebarProvider>
+            </MetaInfoProvider>
+            <Footer />
+          </RequiredAuthProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
         <Toaster />
       </body>
     </html>
