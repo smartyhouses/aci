@@ -84,3 +84,40 @@ class FunctionDefinitionFormat(StrEnum):
 class ClientIdentityProvider(StrEnum):
     GOOGLE = "google"
     # GITHUB = "github"
+
+
+class PlanName(StrEnum):
+    """
+    name of a plan
+    """
+
+    FREE = "free"
+    STARTER = "starter"
+    TEAM = "team"
+    GROWTH = "growth"
+    ENTERPRISE = "enterprise"
+
+
+class StripeSubscriptionStatus(StrEnum):
+    """
+    Stripe subscription status: https://docs.stripe.com/api/subscriptions/object#subscription_object-status
+    """
+
+    INCOMPLETE = "incomplete"
+    INCOMPLETE_EXPIRED = "incomplete_expired"
+    TRIALING = "trialing"
+    ACTIVE = "active"
+    PAST_DUE = "past_due"
+    CANCELED = "canceled"
+    UNPAID = "unpaid"
+    PAUSED = "paused"
+
+
+class StripeSubscriptionInterval(StrEnum):
+    """
+    Stripe recurring interval: https://docs.stripe.com/api/subscriptions/object#subscription_object-items-data-price-recurring-interval
+    We only have month and year. Stripe also has day and week.
+    """
+
+    MONTH = "month"
+    YEAR = "year"

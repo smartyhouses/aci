@@ -1,6 +1,7 @@
 import base64
 import copy
 import json
+from typing import TypedDict
 
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.engine import Dialect
@@ -147,3 +148,12 @@ class EncryptedSecurityCredentials(TypeDecorator[dict]):
 
             return decrypted_value
         return None
+
+
+class PlanFeatures(TypedDict):
+    linked_accounts: int
+    api_calls_monthly: int
+    agent_credentials: int
+    developer_seats: int
+    custom_oauth: bool
+    log_retention_days: int
