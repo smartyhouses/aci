@@ -1,6 +1,7 @@
 from typing import Any
 
 import logfire
+import stripe
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
@@ -22,6 +23,7 @@ from aci.server.routes import (
     analytics,
     app_configurations,
     apps,
+    billing,
     functions,
     health,
     linked_accounts,
@@ -43,6 +45,8 @@ setup_logging(
     filters=[RequestIDLogFilter()],
     environment=config.ENVIRONMENT,
 )
+
+stripe.api_key = config.STRIPE_SECRET_KEY
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -171,4 +175,10 @@ app.include_router(
     webhooks.router,
     prefix=config.ROUTER_PREFIX_WEBHOOKS,
     tags=[config.ROUTER_PREFIX_WEBHOOKS.split("/")[-1]],
+)
+
+app.include_router(
+    billing.router,
+    prefix=config.ROUTER_PREFIX_BILLING,
+    tags=[config.ROUTER_PREFIX_BILLING.split("/")[-1]],
 )

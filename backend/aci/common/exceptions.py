@@ -402,3 +402,33 @@ class DependencyCheckError(ACIException):
             message=message,
             error_code=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class SubscriptionPlanNotFound(ACIException):
+    """
+    Exception raised when a plan is not found
+    """
+
+    def __init__(self, message: str | None = None):
+        super().__init__(
+            title="Subscription plan not found",
+            message=message,
+            error_code=status.HTTP_404_NOT_FOUND,
+        )
+
+
+class BillingError(ACIException):
+    """
+    Exception raised when a billing error occurs
+    """
+
+    def __init__(
+        self,
+        message: str | None = None,
+        error_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR,
+    ):
+        super().__init__(
+            title="Billing error",
+            message=message,
+            error_code=error_code,
+        )

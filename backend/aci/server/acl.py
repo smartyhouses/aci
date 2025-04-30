@@ -20,6 +20,7 @@ def get_propelauth() -> FastAPIAuth:
 
 
 def validate_user_access_to_org(user: User, org_id: UUID, org_role: OrganizationRole) -> None:
+    # TODO: refactor to use PropelAuth built-in methods
     org = user.get_org(str(org_id))
     # TODO: may need to check user_inherited_roles_plus_current_role for project level ACLs
     if (org is None) or (org.user_is_role(org_role) is False):
@@ -30,9 +31,20 @@ def validate_user_access_to_org(user: User, org_id: UUID, org_role: Organization
 
 
 def validate_user_access_to_project(db_session: Session, user: User, project_id: UUID) -> None:
+    # TODO: refactor to use PropelAuth built-in methods
     # TODO: we can introduce project level ACLs later
     project = crud.projects.get_project(db_session, project_id)
     if not project:
         raise ProjectNotFound(f"project={project_id} not found")
 
     validate_user_access_to_org(user, project.org_id, OrganizationRole.OWNER)
+
+
+def require_org_member(user: User, org_id: UUID) -> None:
+    _auth.require_org_member(user, str(org_id))
+
+
+def require_org_member_with_minimum_role(
+    user: User, org_id: UUID, minimum_role: OrganizationRole
+) -> None:
+    _auth.require_org_member_with_minimum_role(user, str(org_id), minimum_role)
