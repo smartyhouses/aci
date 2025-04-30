@@ -37,6 +37,7 @@ dependencies = [
     { name = "rich" },
     { name = "sentry-sdk", extra = ["fastapi"] },
     { name = "sqlalchemy" },
+    { name = "stripe" },
     { name = "svix" },
     { name = "uvicorn", extra = ["standard"] },
 ]
@@ -83,6 +84,7 @@ requires-dist = [
     { name = "rich", specifier = ">=13.9.4,<14.0.0" },
     { name = "sentry-sdk", extras = ["fastapi"], specifier = ">=2.22.0,<3.0.0" },
     { name = "sqlalchemy", specifier = ">=2.0.35,<3.0.0" },
+    { name = "stripe", specifier = ">=12.0.1" },
     { name = "svix", specifier = ">=1.63.1,<2.0.0" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.31.0,<0.32.0" },
 ]
@@ -2123,6 +2125,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/ce/20/08dfcd9c983f6a6f4a1000d934b9e6d626cff8d2eeb77a89a68eef20a2b7/starlette-0.46.2.tar.gz", hash = "sha256:7f7361f34eed179294600af672f565727419830b54b7b084efe44bb82d2fccd5", size = 2580846, upload-time = "2025-04-13T13:56:17.942Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8b/0c/9d30a4ebeb6db2b25a841afbb80f6ef9a854fc3b41be131d249a977b4959/starlette-0.46.2-py3-none-any.whl", hash = "sha256:595633ce89f8ffa71a015caed34a5b2dc1c0cdb3f0f1fbd1e69339cf2abeec35", size = 72037, upload-time = "2025-04-13T13:56:16.21Z" },
+]
+
+[[package]]
+name = "stripe"
+version = "12.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "requests" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/33/73/b047ad181b17933fabac11eb16d910ae732e84a98a2385f5d613563c9579/stripe-12.0.1.tar.gz", hash = "sha256:3fc7cc190946d8ebcc5b637e7e04f387d61b9c5156a89619a3ba90704ac09d4a", size = 1370176 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8b/f6/bd95469c8bd10458a4273db30e962ec7965f07e017c47c2906ef849cfb78/stripe-12.0.1-py2.py3-none-any.whl", hash = "sha256:b10b19dbd0622868b98a7c6e879ebde704be96ad75c780944bca4069bb427988", size = 1613622 },
 ]
 
 [[package]]
