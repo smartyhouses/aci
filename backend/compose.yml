@@ -78,7 +78,7 @@ services:
       - ./scripts:/workdir/scripts
       - ./alembic.ini:/workdir/alembic.ini
     command: >
-      /bin/sh -c "alembic upgrade head && tail -f /dev/null"
+      /bin/sh -c "/workdir/scripts/on_startup.sh && tail -f /dev/null"
     depends_on:
       db:
         condition: service_healthy

@@ -1,6 +1,7 @@
 import click
 
 from aci.cli.commands import (
+    billing,
     create_agent,
     create_project,
     create_random_api_key,
@@ -32,6 +33,7 @@ cli.add_command(delete_app.delete_app)
 cli.add_command(upsert_functions.upsert_functions)
 cli.add_command(create_random_api_key.create_random_api_key)
 cli.add_command(fuzzy_test_function_execution.fuzzy_test_function_execution)
+cli.add_command(billing.populate_subscription_plans)
 
 if __name__ == "__main__":
     cli()
