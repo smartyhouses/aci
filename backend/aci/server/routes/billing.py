@@ -347,6 +347,12 @@ async def handle_checkout_session_completed(session_data: dict, db_session: Sess
         f"Successfully created/updated subscription record for Org ID: {client_reference_id}"
     )
 
+    # 6. Update subscription metadata with org_id
+    stripe.Subscription.modify(
+        stripe_subscription_id,
+        metadata={"org_id": client_reference_id},
+    )
+
 
 async def handle_customer_subscription_updated(
     subscription_data: dict, db_session: Session
