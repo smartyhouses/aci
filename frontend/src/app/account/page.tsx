@@ -16,7 +16,7 @@ export default function AccountPage() {
   const { user, activeOrg, accessToken } = useMetaInfo();
   const logoutFn = useLogoutFunction();
 
-  const { data: subscription } = useSubscription();
+  const { data: subscription, isLoading } = useSubscription();
 
   return (
     <div>
@@ -176,43 +176,49 @@ export default function AccountPage() {
               Manage your subscription
             </p>
           </div>
-          <div className="flex-1">
-            <div className="flex justify-between p-4">
-              <div>
-                <div className="font-medium">
-                  You are on the {subscription?.plan} plan
+          {isLoading ? (
+            <div>Loading...</div>
+          ) : (
+            <>
+              <div className="flex-1">
+                <div className="flex justify-between p-4">
+                  <div>
+                    <div className="font-medium">
+                      You are on the {subscription?.plan} plan
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="flex-1">
-            <div className="flex justify-between p-4">
-              <div>
-                {subscription?.plan === PlanName.Free ? (
-                  <Link href="/pricing">
-                    <Button variant="outline">
-                      <BsStars />
-                      Subscribe Now
-                    </Button>
-                  </Link>
-                ) : (
-                  <Button
-                    variant="outline"
-                    onClick={async () => {
-                      const url = await createCustomerPortalSession(
-                        accessToken,
-                        activeOrg.orgId,
-                      );
-                      window.location.href = url;
-                    }}
-                  >
-                    <RiUserSettingsLine />
-                    Manage Subscription
-                  </Button>
-                )}
+              <div className="flex-1">
+                <div className="flex justify-between p-4">
+                  <div>
+                    {subscription?.plan === PlanName.Free ? (
+                      <Link href="/pricing">
+                        <Button variant="outline">
+                          <BsStars />
+                          Subscribe Now
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        onClick={async () => {
+                          const url = await createCustomerPortalSession(
+                            accessToken,
+                            activeOrg.orgId,
+                          );
+                          window.location.href = url;
+                        }}
+                      >
+                        <RiUserSettingsLine />
+                        Manage Subscription
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
 
         <Separator />

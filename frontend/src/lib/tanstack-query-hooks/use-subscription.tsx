@@ -8,7 +8,7 @@ export const useSubscription = () => {
   const { accessToken, activeOrg } = useMetaInfo();
 
   return useQuery({
-    queryKey: ["subscription"],
+    queryKey: ["subscription", activeOrg.orgId],
     queryFn: () => getSubscription(accessToken, activeOrg.orgId),
   });
 };

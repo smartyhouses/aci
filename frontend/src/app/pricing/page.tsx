@@ -15,7 +15,7 @@ import { Interval, PlanName } from "@/lib/types/billing";
 import { useSubscription } from "@/lib/tanstack-query-hooks/use-subscription";
 import { createCheckoutSession } from "@/lib/api/billing";
 import { useMetaInfo } from "@/components/context/metainfo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -28,12 +28,12 @@ const tiers = [
     priceYearly: "$0",
     description: "Perfect for getting started & simple projects.",
     features: [
-      "3 End user accounts",
+      "3 unique end user accounts",
       "1K API calls/month",
-      "5 Agent credentials",
-      "1 Developer seat",
-      "1 week Log retention",
-      "Discord Support",
+      "5 agent credentials",
+      "1 developer seat",
+      "1 week log retention",
+      "Discord support",
     ],
     buttonText: "Start for Free",
     buttonVariant: "default" as const,
@@ -43,16 +43,16 @@ const tiers = [
     id: "tier-starter",
     href: process.env.NEXT_PUBLIC_SUBSCRIPTION_STARTER_LINK_MONTHLY,
     priceMonthly: "$29",
-    priceYearly: "$296",
-    discount: "15% discount on annual",
+    priceYearly: "$299",
+    discount: "saves $49 on annual",
     description: "For growing applications needing more capacity.",
     features: [
-      "250 End user accounts",
+      "250 unique end user accounts",
       "100K API calls/month",
-      "2500 Agent credentials",
-      "5 Developer seats",
+      "2500 agent credentials",
+      "5 developer seats",
       "Custom OAuth credentials",
-      "1 month Log retention",
+      "1 month log retention",
     ],
     buttonText: "Get Started",
     buttonVariant: "default" as const,
@@ -62,16 +62,16 @@ const tiers = [
     id: "tier-team",
     href: process.env.NEXT_PUBLIC_SUBSCRIPTION_TEAM_LINK_MONTHLY,
     priceMonthly: "$99",
-    priceYearly: "$1010",
-    discount: "15% discount on annual",
+    priceYearly: "$999",
+    discount: "saves $189 on annual",
     description: "Ideal for teams needing collaboration features.",
     features: [
-      "1500 End user accounts",
+      "1500 unique end user accounts",
       "200K API calls/month",
-      "Unlimited Agent credentials",
-      "10 Developer seats",
+      "Unlimited agent credentials",
+      "10 developer seats",
       "Custom OAuth credentials",
-      "1 month Log retention",
+      "1 month log retention",
     ],
     mostPopular: true,
     buttonText: "Get Started",
@@ -103,9 +103,11 @@ export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
   const router = useRouter();
 
-  if (subscription && subscription.plan !== PlanName.Free) {
-    window.location.href = "/account";
-  }
+  useEffect(() => {
+    if (subscription && subscription.plan !== PlanName.Free) {
+      router.replace("/account");
+    }
+  }, [subscription, router]);
 
   // TODO: Enterprise button should have a mail popup
   return (
@@ -150,7 +152,7 @@ export default function PricingPage() {
                   : "text-muted-foreground hover:bg-background/50"
               }`}
             >
-              Yearly <span className="text-xs">(Save 15%)</span>
+              Yearly
             </button>
           </div>
         </div>
@@ -191,7 +193,7 @@ export default function PricingPage() {
                       </span>
                     )}
                   </p>
-                  {isYearly && tier.discount && (
+                  {tier.discount && (
                     <p className="mt-1 text-xs leading-5 text-muted-foreground">
                       {tier.discount}
                     </p>
