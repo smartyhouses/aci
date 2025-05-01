@@ -12,7 +12,13 @@ logger = get_logger(__name__)
 
 def get_subscription_by_org_id(db_session: Session, org_id: UUID) -> Subscription | None:
     """
-    Get a subscription by organization ID.
+    Retrieves a subscription associated with the specified organization ID.
+    
+    Args:
+        org_id: The UUID of the organization whose subscription is to be retrieved.
+    
+    Returns:
+        The Subscription object if found, otherwise None.
     """
     statement = (
         select(Subscription)
@@ -26,7 +32,9 @@ def get_subscription_by_stripe_id(
     db_session: Session, stripe_subscription_id: str
 ) -> Subscription | None:
     """
-    Get a subscription by Stripe subscription ID.
+    Retrieves a subscription record by its Stripe subscription ID.
+    
+    Locks the selected row for the duration of the transaction. Returns the subscription if found, otherwise None.
     """
     statement = (
         select(Subscription)
@@ -40,7 +48,9 @@ def update_subscription_by_stripe_id(
     db_session: Session, stripe_subscription_id: str, subscription_update: SubscriptionUpdate
 ) -> Subscription | None:
     """
-    Update subscription status based on Stripe subscription ID.
+    Updates a Subscription record identified by Stripe subscription ID with provided fields.
+    
+    Only fields explicitly set in the SubscriptionUpdate schema are applied. If no fields are provided, returns the current subscription without changes. Returns the updated subscription if found, otherwise None.
     """
     update_data = subscription_update.model_dump(exclude_unset=True)
     if not update_data:
@@ -72,7 +82,13 @@ def update_subscription_by_stripe_id(
 
 def delete_subscription_by_stripe_id(db_session: Session, stripe_subscription_id: str) -> bool:
     """
-    Mark a subscription as deleted by Stripe subscription ID. Returns True if marked, False otherwise.
+    Deletes a subscription identified by its Stripe subscription ID.
+    
+    Args:
+        stripe_subscription_id: The Stripe subscription ID of the subscription to delete.
+    
+    Returns:
+        True if the subscription was found and deleted, False if not found.
     """
     subscription = get_subscription_by_stripe_id(db_session, stripe_subscription_id)
     if not subscription:

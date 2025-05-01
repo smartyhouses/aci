@@ -97,6 +97,13 @@ const tiers = [
   },
 ];
 
+/**
+ * Renders the pricing plans page with selectable subscription tiers and billing intervals.
+ *
+ * Displays available subscription plans, allows users to toggle between monthly and yearly pricing, and initiates a checkout session for plan upgrades. Redirects users with an active paid subscription to the account page.
+ *
+ * @remark The Enterprise plan button currently uses a placeholder link and does not open a mail popup.
+ */
 export default function PricingPage() {
   const { data: subscription } = useSubscription();
   const { accessToken, activeOrg } = useMetaInfo();

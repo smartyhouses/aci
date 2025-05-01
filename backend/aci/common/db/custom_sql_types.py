@@ -120,6 +120,11 @@ class EncryptedSecurityCredentials(TypeDecorator[dict]):
         return None
 
     def process_result_value(self, value: dict | None, dialect: Dialect) -> dict | None:
+        """
+        Decrypts sensitive fields in a credentials dictionary retrieved from the database.
+        
+        If the dictionary represents API key credentials, decrypts the 'secret_key'. For OAuth2 credentials, decrypts 'access_token', 'refresh_token', and deserializes and decrypts 'raw_token_response'. Returns a new dictionary with decrypted values, or None if input is None.
+        """
         if value is not None:
             decrypted_value = copy.deepcopy(value)  # Avoid modifying the original dict
 

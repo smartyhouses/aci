@@ -397,6 +397,12 @@ class DependencyCheckError(ACIException):
     """
 
     def __init__(self, message: str | None = None):
+        """
+        Initializes a DependencyCheckError for failed dependency checks.
+        
+        Args:
+            message: Optional detailed error message.
+        """
         super().__init__(
             title="Dependency check error",
             message=message,
@@ -410,6 +416,12 @@ class SubscriptionPlanNotFound(ACIException):
     """
 
     def __init__(self, message: str | None = None):
+        """
+        Initializes a SubscriptionPlanNotFound exception for missing subscription plans.
+        
+        Args:
+            message: Optional detailed error message.
+        """
         super().__init__(
             title="Subscription plan not found",
             message=message,
@@ -427,6 +439,13 @@ class BillingError(ACIException):
         message: str | None = None,
         error_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR,
     ):
+        """
+        Initializes a BillingError exception for billing-related failures.
+        
+        Args:
+            message: Optional detailed error message.
+            error_code: HTTP status code representing the error type. Defaults to 500.
+        """
         super().__init__(
             title="Billing error",
             message=message,

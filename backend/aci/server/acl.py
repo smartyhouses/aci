@@ -21,6 +21,12 @@ def get_propelauth() -> FastAPIAuth:
 
 def validate_user_access_to_org(user: User, org_id: UUID, org_role: OrganizationRole) -> None:
     # TODO: refactor to use PropelAuth built-in methods
+    """
+    Checks if a user has the specified role in an organization and raises an exception if not.
+    
+    Raises:
+        OrgAccessDenied: If the user is not a member of the organization or lacks the required role.
+    """
     org = user.get_org(str(org_id))
     # TODO: may need to check user_inherited_roles_plus_current_role for project level ACLs
     if (org is None) or (org.user_is_role(org_role) is False):
@@ -33,6 +39,13 @@ def validate_user_access_to_org(user: User, org_id: UUID, org_role: Organization
 def validate_user_access_to_project(db_session: Session, user: User, project_id: UUID) -> None:
     # TODO: refactor to use PropelAuth built-in methods
     # TODO: we can introduce project level ACLs later
+    """
+    Validates that a user has OWNER access to the organization associated with a project.
+    
+    Raises:
+        ProjectNotFound: If the specified project does not exist.
+        OrgAccessDenied: If the user does not have OWNER role in the project's organization.
+    """
     project = crud.projects.get_project(db_session, project_id)
     if not project:
         raise ProjectNotFound(f"project={project_id} not found")
@@ -41,10 +54,23 @@ def validate_user_access_to_project(db_session: Session, user: User, project_id:
 
 
 def require_org_member(user: User, org_id: UUID) -> None:
+    """
+    Ensures that the user is a member of the specified organization.
+    
+    Raises an authorization error if the user is not a member of the organization.
+    """
     _auth.require_org_member(user, str(org_id))
 
 
 def require_org_member_with_minimum_role(
     user: User, org_id: UUID, minimum_role: OrganizationRole
 ) -> None:
+    """
+    Ensures the user is a member of the organization with at least the specified minimum role.
+    
+    Args:
+        user: The user whose membership and role are being validated.
+        org_id: The unique identifier of the organization.
+        minimum_role: The minimum required role for access.
+    """
     _auth.require_org_member_with_minimum_role(user, str(org_id), minimum_role)

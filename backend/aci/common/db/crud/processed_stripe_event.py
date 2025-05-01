@@ -9,14 +9,13 @@ logger = get_logger(__name__)
 
 def record_processed_event(db_session: Session, event_id: str) -> ProcessedStripeEvent:
     """
-    Create a new processed Stripe event record.
-
+    Creates and persists a new ProcessedStripeEvent record for the given Stripe event ID.
+    
     Args:
-        db_session: The database session.
-        event_id: The Stripe event ID that was processed.
-
+        event_id: The Stripe event ID to record as processed.
+    
     Returns:
-        The created ProcessedStripeEvent record.
+        The newly created ProcessedStripeEvent instance.
     """
     processed_event = ProcessedStripeEvent(event_id=event_id)
     db_session.add(processed_event)
@@ -27,14 +26,13 @@ def record_processed_event(db_session: Session, event_id: str) -> ProcessedStrip
 
 def is_event_processed(db_session: Session, event_id: str) -> bool:
     """
-    Check if a Stripe event has already been processed.
-
+    Determines whether a Stripe event with the given ID has already been processed.
+    
     Args:
-        db_session: The database session.
         event_id: The Stripe event ID to check.
-
+    
     Returns:
-        True if the event has already been processed, False otherwise.
+        True if a processed event with the specified ID exists, otherwise False.
     """
     statement = select(ProcessedStripeEvent).filter_by(event_id=event_id)
     result = db_session.execute(statement).scalar_one_or_none()

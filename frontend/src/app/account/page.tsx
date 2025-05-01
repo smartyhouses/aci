@@ -12,6 +12,13 @@ import Link from "next/link";
 import { BsStars } from "react-icons/bs";
 import { RiUserSettingsLine } from "react-icons/ri";
 
+/**
+ * Renders the account settings page, displaying user information, subscription status, and sign-out functionality.
+ *
+ * Shows the user's name and email, current subscription plan, and provides options to manage or upgrade the subscription. Includes a sign-out button.
+ *
+ * @remark Redirects the user to the billing portal when "Manage Subscription" is clicked for paid plans.
+ */
 export default function AccountPage() {
   const { user, activeOrg, accessToken } = useMetaInfo();
   const logoutFn = useLogoutFunction();

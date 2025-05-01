@@ -50,6 +50,15 @@ stripe.api_key = config.STRIPE_SECRET_KEY
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
+    """
+    Generates a unique identifier for an API route based on its first tag and name.
+    
+    Args:
+        route: The APIRoute object for which to generate the unique ID.
+    
+    Returns:
+        A string combining the route's first tag and its name, separated by a hyphen.
+    """
     return f"{route.tags[0]}-{route.name}"
 
 

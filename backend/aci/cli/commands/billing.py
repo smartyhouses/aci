@@ -88,9 +88,9 @@ PLANS_DATA: list[PlanData] = [
 )
 def populate_subscription_plans(skip_dry_run: bool) -> None:
     """
-    Populates the Plan table with Starter, Team, and Growth plans.
-    If plans with the same names exist, they will be updated.
-    Uses placeholder Stripe IDs.
+    Creates or updates predefined subscription plans in the database from static plan data.
+    
+    If a plan with the same name exists, its details are updated; otherwise, a new plan is created. By default, changes are rolled back (dry run) unless the --skip-dry-run flag is provided, in which case changes are committed.
     """
     console.rule("[bold blue]Populating Subscription Plans[/bold blue]")
 

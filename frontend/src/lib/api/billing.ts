@@ -1,5 +1,14 @@
 import { Interval, PlanName, Subscription } from "@/lib/types/billing";
 
+/**
+ * Retrieves the current subscription details for a specified organization.
+ *
+ * @param accessToken - Bearer token used for API authentication.
+ * @param orgId - Identifier of the organization whose subscription is being fetched.
+ * @returns The organization's subscription information.
+ *
+ * @throws {Error} If the API request fails or returns a non-OK HTTP status.
+ */
 export async function getSubscription(
   accessToken: string,
   orgId: string,
@@ -22,6 +31,15 @@ export async function getSubscription(
   return response.json();
 }
 
+/**
+ * Initiates a checkout session for a specified billing plan and interval.
+ *
+ * @param planName - The name of the billing plan to purchase.
+ * @param interval - The billing interval for the selected plan.
+ * @returns A string representing the checkout session identifier or URL.
+ *
+ * @throws {Error} If the checkout session could not be created, including the HTTP status code.
+ */
 export async function createCheckoutSession(
   accessToken: string,
   orgId: string,
@@ -52,6 +70,17 @@ export async function createCheckoutSession(
   return response.json();
 }
 
+/**
+ * Creates a customer portal session for the specified organization.
+ *
+ * Sends a POST request to the billing API to generate a session for managing customer billing information.
+ *
+ * @param accessToken - Bearer token used for API authorization.
+ * @param orgId - Identifier of the organization for which the portal session is created.
+ * @returns A string representing the customer portal session identifier or URL.
+ *
+ * @throws {Error} If the API request fails or returns a non-OK HTTP status.
+ */
 export async function createCustomerPortalSession(
   accessToken: string,
   orgId: string,

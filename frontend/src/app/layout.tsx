@@ -25,6 +25,13 @@ const geistMono = Geist_Mono({
 
 const queryClient = new QueryClient();
 
+/**
+ * Defines the root layout for the application, providing global structure, context providers, and metadata.
+ *
+ * Wraps the app with React Query, authentication, metadata, and sidebar providers, and includes global UI components such as the sidebar, header, footer, analytics, and toast notifications.
+ *
+ * @param children - The content to be rendered within the main layout.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

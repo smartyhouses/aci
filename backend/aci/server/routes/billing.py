@@ -42,6 +42,11 @@ async def get_subscription(
     org_id: Annotated[UUID, Header(alias="X-ACI-ORG-ID")],
     user: Annotated[User, Depends(auth.require_user)],
 ) -> SubscriptionPublic:
+    """
+    Retrieves the current active subscription for an organization.
+    
+    If no active subscription exists, returns a free plan with active status. Raises an error if the associated plan cannot be found.
+    """
     acl.require_org_member(user, org_id)
 
     active_subscription = crud.subscriptions.get_subscription_by_org_id(db_session, org_id)
@@ -75,6 +80,22 @@ async def create_checkout_session(
     org_id: Annotated[UUID, Header(alias="X-ACI-ORG-ID")],
     body: Annotated[StripeCheckoutSessionCreate, Body()],
 ) -> str:
+    """
+    Creates a Stripe checkout session for purchasing a subscription plan.
+    
+    Requires the user to have at least ADMIN role in the specified organization. Retrieves the requested plan and interval, creates a Stripe checkout session, and returns the session URL for the user to complete the purchase.
+    
+    Args:
+        org_id: The UUID of the organization for which the subscription is being purchased.
+        body: Contains the desired plan name and billing interval.
+    
+    Returns:
+        The URL of the Stripe checkout session for completing the subscription purchase.
+    
+    Raises:
+        SubscriptionPlanNotFound: If the requested plan does not exist.
+        BillingError: If there is an error creating the Stripe checkout session or retrieving the session URL.
+    """
     acl.require_org_member_with_minimum_role(user, org_id, OrganizationRole.ADMIN)
 
     plan = crud.plans.get_by_name(db_session, body.plan_name)
@@ -135,6 +156,14 @@ async def create_customer_portal_session(
     db_session: Annotated[Session, Depends(deps.yield_db_session)],
     org_id: Annotated[UUID, Header(alias="X-ACI-ORG-ID")],
 ) -> str:
+    """
+    Creates a Stripe customer portal session for managing an organization's subscription.
+    
+    Requires the user to have at least ADMIN role in the organization. Raises a BillingError if the organization does not have an active subscription or if Stripe session creation fails.
+    
+    Returns:
+        The URL for the Stripe customer portal session.
+    """
     acl.require_org_member_with_minimum_role(user, org_id, OrganizationRole.ADMIN)
 
     active_subscription = crud.subscriptions.get_subscription_by_org_id(db_session, org_id)
@@ -169,6 +198,11 @@ async def handle_stripe_webhook(
     db_session: Annotated[Session, Depends(deps.yield_db_session)],
     stripe_signature: str = Header(None),
 ) -> None:
+    """
+    Handles incoming Stripe webhook events, verifies their authenticity, and dispatches them to the appropriate event handler.
+    
+    Verifies the Stripe webhook signature, checks for duplicate event processing, and routes supported event types to their respective handlers. Records processed events to ensure idempotency and logs processing outcomes. Raises a billing error with a 400 status code if the payload or signature is invalid.
+    """
     payload = await request.body()
     event = None
 
@@ -260,14 +294,9 @@ async def handle_stripe_webhook(
 
 async def handle_checkout_session_completed(session_data: dict, db_session: Session) -> None:
     """
-    Handles the checkout.session.completed event.
-    1. Retrieve the client_reference_id and subscription details from the session data
-    2. Retrieve the subscription details from Stripe
-    3. Find the plan corresponding to the subscription price id
-    4. Check if a subscription record already exists for this org. If it does, check
-    the stripe_subscription_id to make sure it matches. If it doesn't match, log an
-    error and return an error code. If it does match, no-op.
-    5. Create the new Subscription record
+    Processes a Stripe checkout.session.completed event to create or validate a subscription record.
+    
+    Extracts organization and subscription details from the event, retrieves the corresponding subscription from Stripe, maps it to an internal plan, and ensures a matching subscription record exists in the database. If no record exists, creates a new subscription entry. Updates Stripe subscription metadata with organization information. Raises a BillingError if required data is missing or inconsistent.
     """
     logger.info(f"Handling checkout.session.completed event: {session_data}")
     # TODO: find out how to use the construct_from method
@@ -375,21 +404,9 @@ async def handle_customer_subscription_updated(
     subscription_data: dict, db_session: Session
 ) -> None:
     """
-    Handles the customer.subscription.updated event.
-    1. Find the existing subscription record in db and also retrieve the latest
-    subscription object from Stripe using the stripe_subscription_id.
-    2. If the subscription record does not exist, there are two possible cases:
-        a. Out of order delivery: the subscription was immediately updated after
-        user creates the subscription, and the checkout.session.completed event
-        has not been handled yet.
-        b. Out of order event: the subscription was updated and then immediately
-        deleted. The customer.subscription.deleted was handled before this event.
-       If the subscription status of the latest subscription object from Stripe
-       is not canceled, then it's case a, otherwise it's case b.
-       For case a, we return an error code to trigger a retry.
-       For case b, we return 200.
-    3. If the subscription record exists, we update the subscription record with
-    the details from the latest subscription object from Stripe.
+    Processes a Stripe customer.subscription.updated event to synchronize subscription status.
+    
+    Retrieves the latest subscription details from Stripe and updates the corresponding internal subscription record. If the subscription record does not exist and the Stripe subscription is not canceled, raises an error to trigger a retry (handling out-of-order events). If the subscription is canceled and no record exists, the event is ignored. Raises a billing error if the internal plan cannot be found.
     """
     logger.info(
         "Handling customer.subscription.updated event",
@@ -493,9 +510,10 @@ async def handle_customer_subscription_deleted(
     subscription_data: dict, db_session: Session
 ) -> None:
     """
-    Handles the customer.subscription.deleted event.
-    1. Find the existing subscription record by stripe_subscription_id
-    2. Delete the subscription record
+    Processes a Stripe customer.subscription.deleted event by removing the corresponding subscription record.
+    
+    Raises:
+        BillingError: If the event payload is missing the subscription ID or if the subscription record does not exist.
     """
     logger.info(
         "Handling customer.subscription.deleted event",
@@ -542,8 +560,10 @@ def _parse_stripe_subscription_details(
     subscription_data: dict,
 ) -> StripeSubscriptionDetails:
     """
-    Parse the Stripe subscription details from a Stripe subscription dict based on the
-    schema: https://docs.stripe.com/api/subscriptions/retrieve?lang=python
+    Parses a Stripe subscription dictionary into a StripeSubscriptionDetails object.
+    
+    Extracts relevant fields such as subscription ID, customer ID, status, cancellation flag,
+    current period end, price ID, and billing interval from the Stripe subscription data.
     """
     stripe_subscription_id = subscription_data.get("id")
     stripe_customer_id = subscription_data.get("customer")
