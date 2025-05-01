@@ -43,7 +43,7 @@ def upgrade() -> None:
     )
     op.create_table('subscriptions',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('org_id', sa.UUID(), nullable=False),
+    sa.Column('org_id', sa.UUID(), nullable=False, unique=True),
     sa.Column('plan_id', sa.UUID(), nullable=False),
     sa.Column('stripe_customer_id', sa.String(length=255), nullable=False),
     sa.Column('stripe_subscription_id', sa.String(length=255), nullable=False),
