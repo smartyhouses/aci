@@ -43,3 +43,9 @@ class StripeSubscriptionDetails(BaseModel):
     cancel_at_period_end: bool
     stripe_price_id: str
     interval: StripeSubscriptionInterval
+
+
+class StripeSubscriptionMetadata(BaseModel):
+    org_id: UUID
+    checkout_user_id: str
+    checkout_user_email: str

@@ -6,6 +6,7 @@ from uuid import UUID
 import stripe
 from fastapi import APIRouter, Body, Depends, Header, Request, status
 from propelauth_fastapi import User
+from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -22,6 +23,7 @@ from aci.common.logging_setup import get_logger
 from aci.common.schemas.stripe import StripeCheckoutSessionCreate
 from aci.common.schemas.subscription import (
     StripeSubscriptionDetails,
+    StripeSubscriptionMetadata,
     SubscriptionPublic,
     SubscriptionUpdate,
 )
@@ -102,6 +104,11 @@ async def create_checkout_session(
             mode="subscription",
             client_reference_id=str(org_id),
             ui_mode="hosted",
+            metadata=StripeSubscriptionMetadata(
+                org_id=org_id,
+                checkout_user_id=user.user_id,
+                checkout_user_email=user.email,
+            ).model_dump(),
         )
     except stripe.StripeError as e:
         logger.error(
@@ -348,9 +355,19 @@ async def handle_checkout_session_completed(session_data: dict, db_session: Sess
     )
 
     # 6. Update subscription metadata with org_id
+    metadata = session_data.get("metadata")
+    try:
+        subscription_metadata = StripeSubscriptionMetadata.model_validate(metadata)
+    except ValidationError as e:
+        logger.error(
+            "Invalid metadata in checkout.session.completed event",
+            extra={"error": e, "metadata": metadata},
+        )
+        return
+
     stripe.Subscription.modify(
         stripe_subscription_id,
-        metadata={"org_id": client_reference_id},
+        metadata=subscription_metadata.model_dump(),
     )
 
 
