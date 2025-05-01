@@ -257,7 +257,9 @@ async def handle_checkout_session_completed(session_data: dict, db_session: Sess
     1. Retrieve the client_reference_id and subscription details from the session data
     2. Retrieve the subscription details from Stripe
     3. Find the plan corresponding to the subscription price id
-    4. Check if a subscription record already exists for this org (idempotency for this specific step)
+    4. Check if a subscription record already exists for this org. If it does, check
+    the stripe_subscription_id to make sure it matches. If it doesn't match, log an
+    error and return an error code. If it does match, no-op.
     5. Create the new Subscription record
     """
     logger.info(f"Handling checkout.session.completed event: {session_data}")
@@ -295,27 +297,39 @@ async def handle_checkout_session_completed(session_data: dict, db_session: Sess
             f"Could not find internal Plan matching Stripe Price ID: {subscription_details.stripe_price_id}"
         )
 
-    # 4. Check if a subscription record already exists for this org (idempotency for this specific step)
-    existing_sub = crud.subscriptions.get_subscription_by_org_id(db_session, client_reference_id)
+    # 4. Check if a subscription record already exists for this org. If it does, check
+    # the stripe_subscription_id to make sure it matches. If it doesn't match, log an
+    # error and return an error code. If it does match, no-op.
+    existing_sub = crud.subscriptions.get_subscription_by_stripe_id(
+        db_session, subscription_details.stripe_subscription_id
+    )
     if existing_sub:
-        subscription_update = SubscriptionUpdate(
-            plan_id=plan.id,
-            stripe_customer_id=stripe_customer_id,
-            status=StripeSubscriptionStatus(subscription_details.status),
-            interval=subscription_details.interval,
-            current_period_end=subscription_details.current_period_end,
-            cancel_at_period_end=subscription_details.cancel_at_period_end,
-        )
-        existing_sub = crud.subscriptions.update_subscription_by_stripe_id(
-            db_session,
-            stripe_subscription_id,
-            subscription_update,
-        )
-        db_session.add(existing_sub)
-        db_session.flush()
-        db_session.refresh(existing_sub)
-    else:
-        # 5. Create the new Subscription record
+        if existing_sub.stripe_subscription_id == subscription_details.stripe_subscription_id:
+            # We don't check if the fields are the same because the subscription may
+            # have already been updated after creation. This handler only needs to
+            # ensure the subscription record is created.
+            logger.info(
+                "Subscription record already created for this org, no-op",
+                extra={
+                    "org_id": client_reference_id,
+                    "stripe_subscription_id": stripe_subscription_id,
+                },
+            )
+            return
+        else:
+            logger.error(
+                "Subscription record already exists for this org, but stripe_subscription_id does not match",
+                extra={
+                    "org_id": client_reference_id,
+                    "existing_stripe_subscription_id": existing_sub.stripe_subscription_id,
+                    "new_stripe_subscription_id": stripe_subscription_id,
+                },
+            )
+            raise BillingError(
+                "Subscription record already exists for this org, but stripe_subscription_id does not match",
+                error_code=status.HTTP_400_BAD_REQUEST,
+            )
+    else:  # 5. Create the new Subscription record
         new_subscription = Subscription(
             org_id=client_reference_id,
             plan_id=plan.id,
@@ -339,58 +353,116 @@ async def handle_customer_subscription_updated(
 ) -> None:
     """
     Handles the customer.subscription.updated event.
-    1. Find the existing subscription record by stripe_subscription_id
-    2. Update the subscription record with the new details
+    1. Find the existing subscription record in db and also retrieve the latest
+    subscription object from Stripe using the stripe_subscription_id.
+    2. If the subscription record does not exist, there are two possible cases:
+        a. Out of order delivery: the subscription was immediately updated after
+        user creates the subscription, and the checkout.session.completed event
+        has not been handled yet.
+        b. Out of order event: the subscription was updated and then immediately
+        deleted. The customer.subscription.deleted was handled before this event.
+       If the subscription status of the latest subscription object from Stripe
+       is not canceled, then it's case a, otherwise it's case b.
+       For case a, we return an error code to trigger a retry.
+       For case b, we return 200.
+    3. If the subscription record exists, we update the subscription record with
+    the details from the latest subscription object from Stripe.
     """
     logger.info(
         "Handling customer.subscription.updated event",
         extra={"subscription_data": subscription_data},
     )
 
-    subscription_details = _parse_stripe_subscription_details(subscription_data)
-
-    # 1. Find your internal Plan record based on the stripe_price_id
-    plan = crud.plans.get_by_stripe_price_id(db_session, subscription_details.stripe_price_id)
-    if not plan:
-        logger.error(
-            "Could not find internal Plan matching Stripe Price ID",
-            extra={"stripe_price_id": subscription_details.stripe_price_id},
-        )
+    stripe_subscription_id = subscription_data.get("id")
+    if not stripe_subscription_id:
+        logger.error(f"Subscription updated event missing ID. Payload: {subscription_data}")
         raise BillingError(
-            f"Could not find internal Plan matching Stripe Price ID: {subscription_details.stripe_price_id}",
+            "Subscription updated event missing ID",
             error_code=status.HTTP_400_BAD_REQUEST,
         )
 
-    # 2. Update the subscription record with the new details
+    # 1.1 Find the existing subscription record in db using the stripe_subscription_id.
+    subscription = crud.subscriptions.get_subscription_by_stripe_id(
+        db_session, stripe_subscription_id
+    )
+    # 1.2 Retrieve the latest subscription object from Stripe using the stripe_subscription_id.
+    try:
+        latest_subscription_data = stripe.Subscription.retrieve(stripe_subscription_id)
+        latest_subscription_details = _parse_stripe_subscription_details(latest_subscription_data)
+        logger.info(
+            "Retrieved latest subscription details from Stripe",
+            extra={"latest_subscription_details": latest_subscription_details},
+        )
+    except stripe.StripeError as e:
+        logger.error(f"Failed to retrieve subscription {stripe_subscription_id}: {e}")
+        raise BillingError() from e
+
+    if not subscription:
+        # 2. Handle out of order delivery
+        logger.error(
+            "Could not find existing Subscription record to update",
+            extra={"stripe_subscription_id": latest_subscription_details.stripe_subscription_id},
+        )
+        if latest_subscription_details.status != StripeSubscriptionStatus.CANCELED:
+            # case a: subscription has yet to be created, need to retry
+            raise BillingError(
+                "Could not find existing Subscription record to update",
+                error_code=status.HTTP_404_NOT_FOUND,
+            )
+        else:
+            # case b: subscription has already been deleted, don't need to retry
+            logger.info(
+                "Subscription has already been deleted, no-op",
+                extra={
+                    "stripe_subscription_id": latest_subscription_details.stripe_subscription_id
+                },
+            )
+            return
+
+    # 3. If the subscription record exists, we update the subscription record with
+    # the details from the latest subscription object from Stripe.
+    plan = crud.plans.get_by_stripe_price_id(
+        db_session, latest_subscription_details.stripe_price_id
+    )
+    if not plan:
+        logger.error(
+            "Could not find internal Plan matching Stripe Price ID",
+            extra={"stripe_price_id": latest_subscription_details.stripe_price_id},
+        )
+        raise BillingError(
+            f"Could not find internal Plan matching Stripe Price ID: {latest_subscription_details.stripe_price_id}",
+            error_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # 4. Update the subscription record with the new details
     update_data = SubscriptionUpdate(
-        status=StripeSubscriptionStatus(subscription_details.status),
+        status=StripeSubscriptionStatus(latest_subscription_details.status),
         plan_id=plan.id,
-        interval=subscription_details.interval,
-        current_period_end=subscription_details.current_period_end,
-        cancel_at_period_end=subscription_details.cancel_at_period_end,
-        stripe_customer_id=subscription_details.stripe_customer_id,
+        interval=latest_subscription_details.interval,
+        current_period_end=latest_subscription_details.current_period_end,
+        cancel_at_period_end=latest_subscription_details.cancel_at_period_end,
+        stripe_customer_id=latest_subscription_details.stripe_customer_id,
     )
 
     subscription = crud.subscriptions.update_subscription_by_stripe_id(
         db_session,
-        subscription_details.stripe_subscription_id,
+        latest_subscription_details.stripe_subscription_id,
         update_data,
     )
     if not subscription:
         logger.error(
             "Could not find existing Subscription record to update",
-            extra={"stripe_subscription_id": subscription_details.stripe_subscription_id},
+            extra={"stripe_subscription_id": latest_subscription_details.stripe_subscription_id},
         )
         raise BillingError(
             "Could not find existing Subscription record to update",
             error_code=status.HTTP_400_BAD_REQUEST,
         )
-
     db_session.commit()
 
     logger.info(
         "Successfully updated subscription record",
-        extra={"stripe_subscription_id": subscription_details.stripe_subscription_id},
+        extra={"stripe_subscription_id": latest_subscription_details.stripe_subscription_id},
     )
 
 
@@ -433,7 +505,7 @@ async def handle_customer_subscription_deleted(
         crud.subscriptions.delete_subscription_by_stripe_id(db_session, stripe_subscription_id)
         db_session.commit()
     else:
-        logger.warning(
+        logger.error(
             "Subscription record not found",
             extra={"stripe_subscription_id": stripe_subscription_id},
         )
@@ -464,16 +536,6 @@ def _parse_stripe_subscription_details(
     subscription_interval = (
         StripeSubscriptionInterval.MONTH if interval == "month" else StripeSubscriptionInterval.YEAR
     )
-
-    print("stripe_subscription_id", stripe_subscription_id)
-    print("stripe_customer_id", stripe_customer_id)
-    print("status", status)
-    print("cancel_at_period_end", cancel_at_period_end)
-    print("current_period_end_dt", current_period_end_dt)
-    print("stripe_price_id", stripe_price_id)
-    print("subscription_interval", subscription_interval)
-
-    # TODO: add stripe event generation timestamp
 
     return StripeSubscriptionDetails(
         stripe_subscription_id=stripe_subscription_id,  # type: ignore

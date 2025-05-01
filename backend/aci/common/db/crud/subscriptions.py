@@ -14,7 +14,11 @@ def get_subscription_by_org_id(db_session: Session, org_id: UUID) -> Subscriptio
     """
     Get a subscription by organization ID.
     """
-    statement = select(Subscription).filter_by(org_id=org_id)
+    statement = (
+        select(Subscription)
+        .filter_by(org_id=org_id)
+        .with_for_update()  # lock the row for the duration of the transaction
+    )
     return db_session.execute(statement).scalar_one_or_none()
 
 
@@ -24,7 +28,11 @@ def get_subscription_by_stripe_id(
     """
     Get a subscription by Stripe subscription ID.
     """
-    statement = select(Subscription).filter_by(stripe_subscription_id=stripe_subscription_id)
+    statement = (
+        select(Subscription)
+        .filter_by(stripe_subscription_id=stripe_subscription_id)
+        .with_for_update()  # lock the row for the duration of the transaction
+    )
     return db_session.execute(statement).scalar_one_or_none()
 
 
