@@ -18,7 +18,7 @@ import { useMetaInfo } from "@/components/context/metainfo";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import CompareTable from "@/components/pricing/compare-table";
+// import CompareTable from "@/components/pricing/compare-table";
 // import { FaqSection } from "@/components/pricing/faq";
 
 const tiers = [
@@ -250,7 +250,7 @@ export default function PricingPage() {
             </Card>
           ))}
         </div>
-        <CompareTable />
+        {/* <CompareTable /> */}
         {/* <FaqSection /> */}
       </div>
     </div>
