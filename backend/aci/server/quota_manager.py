@@ -11,7 +11,13 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 
 from aci.common.db import crud
-from aci.common.exceptions import MaxAgentsReached, MaxProjectsReached
+from aci.common.exceptions import (
+    MaxAgentsReached,
+    MaxLinkedAccountsReached,
+    MaxProjectsReached,
+    ProjectNotFound,
+    SubscriptionPlanNotFound,
+)
 from aci.common.logging_setup import get_logger
 from aci.server import config
 
@@ -64,3 +70,62 @@ def enforce_agent_creation_quota(db_session: Session, project_id: UUID) -> None:
             },
         )
         raise MaxAgentsReached()
+
+
+def enforce_linked_accounts_creation_quota(
+    db_session: Session, project_id: UUID, app_name: str
+) -> None:
+    """
+    Check and enforce that the project hasn't exceeded its linked accounts creation quota for a specific app.
+    The quota is determined by the organization's current subscription plan.
+
+    Args:
+        db_session: Database session
+        project_id: ID of the project to check
+        app_name: Name of the app to check linked accounts for
+
+    Raises:
+        MaxLinkedAccountsReached: If the project has reached its maximum allowed linked accounts for the app
+        SubscriptionPlanNotFound: If the organization's subscription plan cannot be found
+    """
+    # Get the organization ID from the project
+    project = crud.projects.get_project(db_session, project_id)
+    if not project:
+        logger.error(
+            "project not found",
+            extra={"project_id": project_id},
+        )
+        raise ProjectNotFound(f"Project {project_id} not found")
+    org_id = project.org_id
+
+    # Get the organization's subscription
+    subscription = crud.subscriptions.get_subscription_by_org_id(db_session, org_id)
+    if not subscription:
+        # If no subscription found, use the free plan
+        plan = crud.plans.get_by_name(db_session, "free")
+        if not plan:
+            raise SubscriptionPlanNotFound("Free plan not found")
+    else:
+        # Get the plan from the subscription
+        plan = crud.plans.get_by_id(db_session, subscription.plan_id)
+        if not plan:
+            raise SubscriptionPlanNotFound(f"Plan {subscription.plan_id} not found")
+
+    # Get the linked accounts quota from the plan's features
+    max_linked_accounts = plan.features.get("linked_accounts", 0)
+
+    linked_accounts = crud.linked_accounts.get_linked_accounts(
+        db_session, project_id, app_name, None
+    )
+    if len(linked_accounts) >= max_linked_accounts:
+        logger.error(
+            "project has reached maximum linked accounts quota for app",
+            extra={
+                "project_id": project_id,
+                "app_name": app_name,
+                "max_linked_accounts": max_linked_accounts,
+                "num_linked_accounts": len(linked_accounts),
+                "plan": plan.name,
+            },
+        )
+        raise MaxLinkedAccountsReached()

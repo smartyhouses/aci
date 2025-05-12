@@ -33,7 +33,7 @@ from aci.common.schemas.security_scheme import (
     APIKeySchemeCredentials,
     NoAuthSchemeCredentials,
 )
-from aci.server import config
+from aci.server import config, quota_manager
 from aci.server import dependencies as deps
 from aci.server import security_credentials_manager as scm
 from aci.server.oauth2_manager import OAuth2Manager
@@ -137,6 +137,11 @@ async def link_account_with_aci_default_credentials(
             f"linked account with linked_account_owner_id={body.linked_account_owner_id} already exists for app={body.app_name}"
         )
     else:
+        # Enforce linked accounts quota before creating new account
+        quota_manager.enforce_linked_accounts_creation_quota(
+            context.db_session, context.project.id, body.app_name
+        )
+
         logger.info(
             "creating linked account with ACI default credentials",
             extra={
@@ -211,6 +216,11 @@ async def link_account_with_no_auth(
             f"linked account with linked_account_owner_id={body.linked_account_owner_id} already exists for app={body.app_name}"
         )
     else:
+        # Enforce linked accounts quota before creating new account
+        quota_manager.enforce_linked_accounts_creation_quota(
+            context.db_session, context.project.id, body.app_name
+        )
+
         logger.info(
             "creating no_auth linked account",
             extra={
@@ -299,6 +309,11 @@ async def link_account_with_api_key(
             f"linked account with linked_account_owner_id={body.linked_account_owner_id} already exists for app={body.app_name}"
         )
     else:
+        # Enforce linked accounts quota before creating new account
+        quota_manager.enforce_linked_accounts_creation_quota(
+            context.db_session, context.project.id, body.app_name
+        )
+
         logger.info(
             "creating api_key linked account",
             extra={
@@ -561,6 +576,11 @@ async def linked_accounts_oauth2_callback(
             db_session, linked_account, security_credentials
         )
     else:
+        # Enforce linked accounts quota before creating new account
+        quota_manager.enforce_linked_accounts_creation_quota(
+            db_session, state.project_id, state.app_name
+        )
+
         logger.info(
             "creating oauth2 linked account",
             extra={
