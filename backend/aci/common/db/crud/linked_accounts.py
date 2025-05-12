@@ -166,3 +166,8 @@ def delete_linked_accounts(db_session: Session, project_id: UUID, app_name: str)
         db_session.delete(linked_account)
     db_session.flush()
     return len(linked_accounts_to_delete)
+
+
+def get_total_number_of_unique_linked_account_ids(db_session: Session) -> int:
+    statement = select(LinkedAccount)
+    return len(db_session.execute(statement).scalars().all())

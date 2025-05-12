@@ -114,17 +114,17 @@ def enforce_linked_accounts_creation_quota(
     # Get the linked accounts quota from the plan's features
     max_linked_accounts = plan.features.get("linked_accounts", 0)
 
-    linked_accounts = crud.linked_accounts.get_linked_accounts(
-        db_session, project_id, app_name, None
+    num_linked_accounts = crud.linked_accounts.get_total_number_of_unique_linked_account_ids(
+        db_session
     )
-    if len(linked_accounts) >= max_linked_accounts:
+    if num_linked_accounts >= max_linked_accounts:
         logger.error(
             "project has reached maximum linked accounts quota for app",
             extra={
                 "project_id": project_id,
                 "app_name": app_name,
                 "max_linked_accounts": max_linked_accounts,
-                "num_linked_accounts": len(linked_accounts),
+                "num_linked_accounts": num_linked_accounts,
                 "plan": plan.name,
             },
         )
