@@ -21,7 +21,7 @@ def test_linked_accounts_quota(
         stripe_monthly_price_id="price_FREE_monthly_placeholder",
         stripe_yearly_price_id="price_FREE_yearly_placeholder",
         features=PlanFeatures(
-            linked_accounts=1,
+            linked_accounts=2,
             api_calls_monthly=1000,
             agent_credentials=5,
             developer_seats=1,
@@ -45,7 +45,7 @@ def test_linked_accounts_quota(
     )
     assert response.status_code == status.HTTP_200_OK
 
-    # Try to create second linked account (should fail due to quota)
+    # Create second linked account (should also succeed)
     body2 = LinkedAccountNoAuthCreate(
         app_name=dummy_app_configuration_no_auth_mock_app_connector_project_1.app_name,
         linked_account_owner_id="test_linked_accounts_quota_2",
@@ -53,6 +53,18 @@ def test_linked_accounts_quota(
     response = test_client.post(
         f"{config.ROUTER_PREFIX_LINKED_ACCOUNTS}/no-auth",
         json=body2.model_dump(mode="json", exclude_none=True),
+        headers={"x-api-key": dummy_api_key_1},
+    )
+    assert response.status_code == status.HTTP_200_OK
+
+    # Try to create third linked account (should fail due to quota)
+    body3 = LinkedAccountNoAuthCreate(
+        app_name=dummy_app_configuration_no_auth_mock_app_connector_project_1.app_name,
+        linked_account_owner_id="test_linked_accounts_quota_3",
+    )
+    response = test_client.post(
+        f"{config.ROUTER_PREFIX_LINKED_ACCOUNTS}/no-auth",
+        json=body3.model_dump(mode="json", exclude_none=True),
         headers={"x-api-key": dummy_api_key_1},
     )
     assert response.status_code == status.HTTP_403_FORBIDDEN
