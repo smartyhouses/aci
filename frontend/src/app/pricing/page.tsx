@@ -18,7 +18,6 @@ import { useMetaInfo } from "@/components/context/metainfo";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
-// import CompareTable from "@/components/pricing/compare-table";
 import { FaqSection } from "@/components/pricing/faq";
 
 const tiers = [
@@ -33,6 +32,7 @@ const tiers = [
       "1K API calls/month",
       "5 Agent Credentials",
       "1 Developer Seat",
+      "Custom OAuth2 Client",
       "3 Days Log Retention",
     ],
     buttonText: "Start for Free",
@@ -50,7 +50,7 @@ const tiers = [
       "100K API calls/month",
       "2500 Agent Credentials",
       "5 Developer Seats",
-      "Custom Oauth2 Client",
+      "Custom OAuth2 Client",
       "1 Week Log Retention",
     ],
     buttonText: "Get Started",
@@ -68,7 +68,7 @@ const tiers = [
       "300K API calls/month",
       "10000 Agent Credentials",
       "10 Developer Seats",
-      "Custom Oauth2 Client",
+      "Custom OAuth2 Client",
       "1 Month Log Retention",
     ],
     mostPopular: true,
@@ -85,7 +85,7 @@ const tiers = [
       "Custom API Calls",
       "Unlimited Agent Credentials",
       "Custom Developer Seats",
-      "Custom Oauth2 Client",
+      "Custom OAuth2 Client",
       "Custom Log Retention",
     ],
     buttonText: "Contact Us",
@@ -246,7 +246,6 @@ export default function PricingPage() {
             </Card>
           ))}
         </div>
-        {/* <CompareTable /> */}
         <FaqSection />
       </div>
     </div>
