@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import distinct, func, select
 from sqlalchemy.orm import Session
 
 from aci.common import validators
@@ -169,5 +169,5 @@ def delete_linked_accounts(db_session: Session, project_id: UUID, app_name: str)
 
 
 def get_total_number_of_unique_linked_account_ids(db_session: Session) -> int:
-    statement = select(LinkedAccount)
-    return len(db_session.execute(statement).scalars().all())
+    statement = select(func.count(distinct(LinkedAccount.id)))
+    return db_session.execute(statement).scalar_one()
