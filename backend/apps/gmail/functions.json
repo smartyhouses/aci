@@ -51,6 +51,94 @@
         }
     },
     {
+        "name": "GMAIL__MESSAGES_GET",
+        "description": "Retrieves and decodes an email message from Gmail",
+        "tags": ["email", "messages"],
+        "visibility": "public",
+        "active": true,
+        "protocol": "connector",
+        "protocol_data": {},
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "message_id": {
+                    "type": "string",
+                    "description": "The ID of the message to retrieve"
+                },
+                "user_id": {
+                    "type": "string",
+                    "description": "The user's email address. The special value me can be used to indicate the authenticated user.",
+                    "default": "me"
+                },
+                "format": {
+                    "type": "string",
+                    "description": "The format to return the message in",
+                    "enum": ["full", "metadata", "minimal", "raw"],
+                    "default": "full"
+                }
+            },
+            "required": ["message_id"],
+            "visible": ["message_id", "user_id", "format"],
+            "additionalProperties": false
+        }
+    },
+    {
+        "name": "GMAIL__MESSAGES_GET_RAW",
+        "description": "Gets the specified message in raw format with base64 encoded content",
+        "tags": ["email", "messages"],
+        "visibility": "public",
+        "active": true,
+        "protocol": "rest",
+        "protocol_data": {
+            "method": "GET",
+            "path": "/users/me/messages/{id}",
+            "server_url": "https://gmail.googleapis.com/gmail/v1"
+        },
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "object",
+                    "description": "Path parameters",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "description": "The ID of the message to retrieve"
+                        }
+                    },
+                    "required": ["id"],
+                    "visible": ["id"],
+                    "additionalProperties": false
+                },
+                "query": {
+                    "type": "object",
+                    "description": "Query parameters",
+                    "properties": {
+                        "format": {
+                            "type": "string",
+                            "description": "The format to return the message in",
+                            "enum": ["full", "metadata", "minimal", "raw"],
+                            "default": "full"
+                        },
+                        "metadataHeaders": {
+                            "type": "array",
+                            "description": "When given and format is metadata, only include headers specified",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": ["format"],
+                    "visible": ["format", "metadataHeaders"],
+                    "additionalProperties": false
+                }
+            },
+            "required": ["path", "query"],
+            "visible": ["path", "query"],
+            "additionalProperties": false
+        }
+    },
+    {
         "name": "GMAIL__MESSAGES_LIST",
         "description": "Lists the messages in the user's mailbox",
         "tags": ["email", "messages"],
@@ -104,62 +192,6 @@
             },
             "required": [],
             "visible": ["query"],
-            "additionalProperties": false
-        }
-    },
-    {
-        "name": "GMAIL__MESSAGES_GET",
-        "description": "Gets the specified message",
-        "tags": ["email", "messages"],
-        "visibility": "public",
-        "active": true,
-        "protocol": "rest",
-        "protocol_data": {
-            "method": "GET",
-            "path": "/users/me/messages/{id}",
-            "server_url": "https://gmail.googleapis.com/gmail/v1"
-        },
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "object",
-                    "description": "Path parameters",
-                    "properties": {
-                        "id": {
-                            "type": "string",
-                            "description": "The ID of the message to retrieve"
-                        }
-                    },
-                    "required": ["id"],
-                    "visible": ["id"],
-                    "additionalProperties": false
-                },
-                "query": {
-                    "type": "object",
-                    "description": "Query parameters",
-                    "properties": {
-                        "format": {
-                            "type": "string",
-                            "description": "The format to return the message in",
-                            "enum": ["full", "metadata", "minimal", "raw"],
-                            "default": "full"
-                        },
-                        "metadataHeaders": {
-                            "type": "array",
-                            "description": "When given and format is metadata, only include headers specified",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "required": ["format"],
-                    "visible": ["format", "metadataHeaders"],
-                    "additionalProperties": false
-                }
-            },
-            "required": ["path", "query"],
-            "visible": ["path", "query"],
             "additionalProperties": false
         }
     },

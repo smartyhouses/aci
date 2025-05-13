@@ -44,6 +44,68 @@ class Gmail(AppConnectorBase):
         # (which was built for generic oauht2/api_key rest apis)
         pass
 
+    def messages_get(
+        self,
+        message_id: str,
+        user_id: str = "me",
+        format: str = "full",
+    ) -> dict:
+        """
+        Get and decode an email message from Gmail API.
+
+        Args:
+            message_id: The ID of the message to retrieve
+            user_id: The user's email address. The special value me can be used to indicate the authenticated user.
+            format: The format to return the message in. Possible values are 'full', 'metadata', 'minimal', or 'raw'.
+
+        Returns:
+            dict: Parsed email message with decoded content
+        """
+        logger.info(f"executing messages_get for message ID: {message_id}")
+
+        service = build("gmail", "v1", credentials=self.credentials)
+        
+        # Get the message from Gmail API
+        message = service.users().messages().get(userId=user_id, id=message_id, format=format).execute()  # type: ignore
+        
+        # Parse the email content
+        parsed_message = {
+            "id": message.get("id"),
+            "threadId": message.get("threadId"),
+            "labelIds": message.get("labelIds", []),
+            "snippet": message.get("snippet", ""),
+            "historyId": message.get("historyId"),
+            "headers": {},
+            "parts": []
+        }
+        
+        # Extract headers
+        if "payload" in message and "headers" in message["payload"]:
+            for header in message["payload"]["headers"]:
+                parsed_message["headers"][header["name"].lower()] = header["value"]
+        
+        # Handle message parts
+        if "payload" in message:
+            # Process message parts recursively
+            self._process_parts(message["payload"], parsed_message["parts"])
+            
+        return parsed_message
+    
+    def _process_parts(self, payload, parts_list):
+        """Helper method to process message parts recursively"""
+        if "body" in payload and "data" in payload["body"] and payload["body"]["data"]:
+            # Decode the body data
+            body_data = base64.urlsafe_b64decode(payload["body"]["data"].encode("ASCII")).decode("utf-8")
+            parts_list.append({
+                "mimeType": payload.get("mimeType", ""),
+                "content": body_data
+            })
+        
+        # Process multipart message
+        if "parts" in payload:
+            for part in payload["parts"]:
+                self._process_parts(part, parts_list)
+
     # TODO: support HTML type for body
     def send_email(
         self,
