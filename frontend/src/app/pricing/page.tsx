@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 // import CompareTable from "@/components/pricing/compare-table";
-// import { FaqSection } from "@/components/pricing/faq";
+import { FaqSection } from "@/components/pricing/faq";
 
 const tiers = [
   {
@@ -34,7 +34,6 @@ const tiers = [
       "5 Agent Credentials",
       "1 Developer Seat",
       "3 Days Log Retention",
-      "Discord support",
     ],
     buttonText: "Start for Free",
     buttonVariant: "default" as const,
@@ -53,7 +52,6 @@ const tiers = [
       "5 Developer Seats",
       "Custom Oauth2 Client",
       "1 Week Log Retention",
-      "Discord + Email Support",
     ],
     buttonText: "Get Started",
     buttonVariant: "default" as const,
@@ -72,7 +70,6 @@ const tiers = [
       "10 Developer Seats",
       "Custom Oauth2 Client",
       "1 Month Log Retention",
-      "Discord + Email Support",
     ],
     mostPopular: true,
     buttonText: "Get Started",
@@ -90,7 +87,6 @@ const tiers = [
       "Custom Developer Seats",
       "Custom Oauth2 Client",
       "Custom Log Retention",
-      "Dedicated Rep Support",
     ],
     buttonText: "Contact Us",
     buttonVariant: "outline" as const,
@@ -251,7 +247,7 @@ export default function PricingPage() {
           ))}
         </div>
         {/* <CompareTable /> */}
-        {/* <FaqSection /> */}
+        <FaqSection />
       </div>
     </div>
   );
