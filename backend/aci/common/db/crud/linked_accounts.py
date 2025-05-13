@@ -168,6 +168,6 @@ def delete_linked_accounts(db_session: Session, project_id: UUID, app_name: str)
     return len(linked_accounts_to_delete)
 
 
-def get_total_number_of_unique_linked_account_ids(db_session: Session) -> int:
-    statement = select(func.count(distinct(LinkedAccount.id)))
+def get_total_number_of_unique_linked_account_owner_ids(db_session: Session) -> int:
+    statement = select(func.count(distinct(LinkedAccount.linked_account_owner_id)))
     return db_session.execute(statement).scalar_one()
