@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Separator } from "@/components/ui/separator";
 import { getApiKey } from "@/lib/api/util";
 import { App } from "@/lib/types/app";
@@ -21,12 +21,16 @@ export default function AppConfigPage() {
 
   const { activeProject } = useMetaInfo();
 
-  const appsMap = apps.reduce(
-    (acc, app) => {
-      acc[app.name] = app;
-      return acc;
-    },
-    {} as Record<string, App>,
+  const appsMap = useMemo(
+    () =>
+      apps.reduce(
+        (acc, app) => {
+          acc[app.name] = app;
+          return acc;
+        },
+        {} as Record<string, App>,
+      ),
+    [apps],
   );
 
   useEffect(() => {
