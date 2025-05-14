@@ -32,7 +32,7 @@ const faqs = [
         >
           ACI.dev
         </a>{" "}
-        allows developers to manage their own end user&apos;s authentication to
+        allows developers to manage their own end users&apos; authentication to
         various applications on the ACI.dev platform. So each unique user
         connecting an account to some application on the platform is counted as
         a unique end user. Each unique end user might link multiple accounts
