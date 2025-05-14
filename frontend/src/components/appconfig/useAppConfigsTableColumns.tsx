@@ -8,9 +8,7 @@ import { GoTrash } from "react-icons/go";
 import { App } from "@/lib/types/app";
 import Image from "next/image";
 import { IdDisplay } from "@/components/apps/id-display";
-import { getApiKey } from "@/lib/api/util";
-import { updateAppConfig, deleteAppConfig } from "@/lib/api/appconfig";
-import { useMetaInfo } from "@/components/context/metainfo";
+import { useUpdateAppConfig, useDeleteAppConfig } from "@/hooks/use-app-config";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,15 +27,14 @@ const columnHelper = createColumnHelper<AppConfig>();
 interface AppConfigsTableColumnsProps {
   linkedAccountsCountMap: Record<string, number>;
   appsMap: Record<string, App>;
-  updateAppConfigs: () => void;
 }
 
 export const useAppConfigsTableColumns = ({
   linkedAccountsCountMap,
   appsMap,
-  updateAppConfigs,
 }: AppConfigsTableColumnsProps): ColumnDef<AppConfig>[] => {
-  const { activeProject } = useMetaInfo();
+  const updateAppConfigMutation = useUpdateAppConfig();
+  const deleteAppConfigMutation = useDeleteAppConfig();
 
   return useMemo(() => {
     return [
@@ -131,9 +128,10 @@ export const useAppConfigsTableColumns = ({
               checked={info.getValue()}
               onAsyncChange={async (checked) => {
                 try {
-                  const apiKey = getApiKey(activeProject);
-                  await updateAppConfig(config.app_name, checked, apiKey);
-                  updateAppConfigs();
+                  await updateAppConfigMutation.mutateAsync({
+                    app_name: config.app_name,
+                    enabled: checked,
+                  });
                   return true;
                 } catch (error) {
                   console.error("Failed to update app config:", error);
@@ -183,14 +181,15 @@ export const useAppConfigsTableColumns = ({
                     <AlertDialogAction
                       onClick={async () => {
                         try {
-                          const apiKey = getApiKey(activeProject);
-                          await deleteAppConfig(config.app_name, apiKey);
-                          updateAppConfigs();
+                          await deleteAppConfigMutation.mutateAsync(
+                            config.app_name,
+                          );
                           toast.success(
                             "App configuration deleted successfully",
                           );
                         } catch (error) {
                           console.error(error);
+                          toast.error("Failed to delete app configuration");
                         }
                       }}
                     >
@@ -205,5 +204,10 @@ export const useAppConfigsTableColumns = ({
         enableGlobalFilter: false,
       }),
     ] as ColumnDef<AppConfig>[];
-  }, [linkedAccountsCountMap, appsMap, activeProject, updateAppConfigs]);
+  }, [
+    linkedAccountsCountMap,
+    appsMap,
+    updateAppConfigMutation,
+    deleteAppConfigMutation,
+  ]);
 };
