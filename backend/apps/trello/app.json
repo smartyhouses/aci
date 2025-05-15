@@ -1,7 +1,7 @@
 {
     "name": "TRELLO",
     "display_name": "Trello",
-    "logo": "https://raw.githubusercontent.com/aipotheosis-labs/aipolabs-icons/refs/heads/main/apps/trello.png",
+    "logo": "https://raw.githubusercontent.com/aipotheosis-labs/aipolabs-icons/refs/heads/main/apps/trello.svg",
     "provider": "Atlassian",
     "version": "aipolabs_0.0.1",
     "description": "Trello is a visual tool for organizing your work and life. Join more than 1 million teams worldwide who are using Trello to collaborate, communicate and coordinate on projects.",
